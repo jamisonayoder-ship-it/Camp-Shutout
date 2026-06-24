@@ -1119,9 +1119,17 @@ function setStatus(mode,msg){statusEl.className='status '+mode;
   // update teams stat if available
   if(TEAMS.length){const el=document.getElementById('statTeams');if(el)el.textContent=TEAMS.length;}}
 async function getCSV(tab,sheetId){
-  const url=`https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(tab)}&_=${Date.now()}`;
-  const res=await fetch(url,{cache:'no-store',redirect:'follow'});
-  if(!res.ok)throw new Error(tab+' '+res.status);return parseCSV(await res.text());}
+  const urls=[
+    `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(tab)}&_=${Date.now()}`,
+    `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&sheet=${encodeURIComponent(tab)}&_=${Date.now()}`
+  ];
+  for(const url of urls){
+    try{const res=await fetch(url,{cache:'no-store'});
+      if(!res.ok)continue;
+      const txt=await res.text();
+      if(txt.trim().startsWith('<!'))continue;
+      return parseCSV(txt);}catch(e){}
+  }throw new Error(tab+' unreachable');}
 async function load(){
   if(!ACTIVE)return;
   const comp=ACTIVE;
@@ -1195,9 +1203,14 @@ async function loadGroupData(){
   const btn=document.getElementById('qualRefresh');if(btn)btn.classList.add('spin');
   await Promise.all(ids.map(async id=>{
     try{
-      const url=`https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(ACTIVE.groupScoreTab)}&_=${Date.now()}`;
-      const res=await fetch(url,{cache:'no-store'});if(!res.ok)return;
-      const grid=parseCSV(await res.text());
+      let _grid=null;
+      const _urls=[
+        `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(ACTIVE.groupScoreTab)}&_=${Date.now()}`,
+        `https://docs.google.com/spreadsheets/d/${id}/export?format=csv&gid=0&_=${Date.now()}`
+      ];
+      for(const _u of _urls){try{const _r=await fetch(_u,{cache:'no-store'});if(!_r.ok)continue;const _t=await _r.text();if(_t.trim().startsWith('<!'))continue;_grid=parseCSV(_t);break;}catch(e){}}
+      if(!_grid)return;
+      const grid=_grid;
       const conf=detectConfFromGrid(grid);
       const st=(parseStandingsGrid(grid)||[]).filter(r=>SCHEDULE[r.team]);
       if(conf&&st.length)QUAL_STANDINGS[conf]=st;

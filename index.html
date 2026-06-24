@@ -37,7 +37,7 @@ body{margin:0;color:var(--ink);font-family:var(--body);-webkit-font-smoothing:an
   display:flex;flex-direction:column;gap:0}
 .comp-card:hover{border-color:var(--blue);transform:translateY(-4px);box-shadow:0 12px 34px rgba(22,54,84,.12)}
 .comp-card:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
-.card-icon{font-size:38px;margin-bottom:14px;line-height:1}
+.card-icon{font-size:38px;margin-bottom:16px;line-height:1;display:block}.card-icon svg{display:block;max-width:100%}
 .card-name{font-family:var(--display);font-size:22px;text-transform:uppercase;letter-spacing:.02em;color:var(--ink);line-height:1;margin-bottom:5px}
 .card-sub{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--blue-deep);font-weight:700;margin-bottom:12px}
 .card-meta{font-size:13px;color:var(--muted);line-height:1.4}
@@ -241,19 +241,107 @@ footer{margin-top:60px;border-top:1px solid var(--line);background:#fff}
     <h1 class="picker-h">Choose your<br>competition</h1>
     <div class="picker-cards">
       <button class="comp-card" onclick="selectComp('tkw')">
-        <div class="card-icon">⚽</div>
+        <svg class="card-icon" viewBox="0 0 100 128" width="80" height="102" xmlns="http://www.w3.org/2000/svg">
+  <!-- Green malachite base -->
+  <rect x="12" y="116" width="76" height="11" rx="5" fill="#2d6b1a"/>
+  <rect x="8"  y="109" width="84" height="9"  rx="4" fill="#22520f"/>
+  <!-- Gold base tiers -->
+  <rect x="14" y="102" width="72" height="9" rx="4" fill="#c8900a"/>
+  <rect x="20" y="95"  width="60" height="9" rx="3" fill="#a87000"/>
+  <!-- Left human figure body -->
+  <path d="M34 95 C32 79 30 66 34 54 C36 47 38 43 40 36"
+        fill="none" stroke="#d4a017" stroke-width="6" stroke-linecap="round"/>
+  <!-- Left figure left arm reaching up to globe -->
+  <path d="M34 64 C26 52 24 38 38 24"
+        fill="none" stroke="#c8900a" stroke-width="5" stroke-linecap="round"/>
+  <!-- Right human figure body -->
+  <path d="M66 95 C68 79 70 66 66 54 C64 47 62 43 60 36"
+        fill="none" stroke="#d4a017" stroke-width="6" stroke-linecap="round"/>
+  <!-- Right figure right arm reaching up to globe -->
+  <path d="M66 64 C74 52 76 38 62 24"
+        fill="none" stroke="#c8900a" stroke-width="5" stroke-linecap="round"/>
+  <!-- Connecting feet/lower body -->
+  <path d="M28 95 Q30 92 34 95" fill="none" stroke="#d4a017" stroke-width="4"/>
+  <path d="M72 95 Q70 92 66 95" fill="none" stroke="#d4a017" stroke-width="4"/>
+  <!-- Globe (Earth) on top -->
+  <circle cx="50" cy="18" r="17" fill="#b07800"/>
+  <circle cx="50" cy="18" r="14" fill="#d4a017"/>
+  <circle cx="50" cy="18" r="12" fill="#e0b020"/>
+  <!-- Globe meridians -->
+  <ellipse cx="50" cy="18" rx="6"  ry="12" fill="none" stroke="rgba(160,100,0,.4)" stroke-width="1.5"/>
+  <ellipse cx="50" cy="18" rx="12" ry="5"  fill="none" stroke="rgba(160,100,0,.4)" stroke-width="1.5"/>
+  <line x1="38" y1="18" x2="62" y2="18" stroke="rgba(160,100,0,.35)" stroke-width="1.5"/>
+  <!-- Shine on globe -->
+  <path d="M42 10 Q44 16 42 24" fill="none" stroke="rgba(255,255,200,.55)" stroke-width="2.5" stroke-linecap="round"/>
+</svg>
         <div class="card-name">Team Keeper Wars</div>
         <div class="card-sub">The Camp Shutout World Cup</div>
         <div class="card-meta">90 nations · 9 confederations · 24 group rounds · 32-team knockout</div>
       </button>
       <button class="comp-card" onclick="selectComp('college')">
-        <div class="card-icon">🎓</div>
+        <svg class="card-icon" viewBox="0 0 100 128" width="80" height="102" xmlns="http://www.w3.org/2000/svg">
+  <!-- Base tiers -->
+  <rect x="14" y="116" width="72" height="11" rx="5" fill="#606060"/>
+  <rect x="18" y="108" width="64" height="10" rx="4" fill="#787878"/>
+  <rect x="24" y="101" width="52" height="9"  rx="3" fill="#686868"/>
+  <!-- Pedestal stem -->
+  <rect x="38" y="76"  width="24" height="27" rx="2" fill="#909090"/>
+  <rect x="28" y="71"  width="44" height="7"  rx="3" fill="#707070"/>
+  <!-- Cup lip top -->
+  <rect x="16" y="24"  width="68" height="8"  rx="4" fill="#909090"/>
+  <!-- Cup body — widens from top to mid then narrows to stem -->
+  <path d="M20 32 L14 68 Q14 73 22 74 L78 74 Q86 73 86 68 L80 32 Z" fill="#b8b8b8"/>
+  <path d="M24 34 L18 67 Q18 71 24 72 L76 72 Q82 71 82 67 L76 34 Z" fill="#d0d0d0"/>
+  <!-- Cup interior shadow -->
+  <path d="M36 36 L30 68" fill="none" stroke="rgba(0,0,0,.1)" stroke-width="2" stroke-linecap="round"/>
+  <!-- Handles -->
+  <path d="M20 38 Q4  44 4  56 Q4  66 20 62" fill="none" stroke="#909090" stroke-width="7" stroke-linecap="round"/>
+  <path d="M80 38 Q96 44 96 56 Q96 66 80 62" fill="none" stroke="#909090" stroke-width="7" stroke-linecap="round"/>
+  <!-- Inner handle highlight -->
+  <path d="M20 38 Q6  44 6  56 Q6  65 20 62" fill="none" stroke="#b8b8b8" stroke-width="3" stroke-linecap="round"/>
+  <path d="M80 38 Q94 44 94 56 Q94 65 80 62" fill="none" stroke="#b8b8b8" stroke-width="3" stroke-linecap="round"/>
+  <!-- Soccer ball on top -->
+  <circle cx="50" cy="16" r="13" fill="#eee"/>
+  <circle cx="50" cy="16" r="11" fill="#fff"/>
+  <!-- Hexagon patches -->
+  <polygon points="50,6 54,9 54,14 50,17 46,14 46,9"   fill="#222"/>
+  <polygon points="50,26 54,23 59,24 60,29 56,32 44,32 40,29 41,24 46,23" fill="none"/>
+  <polygon points="60,10 64,13 62,18 57,19 54,14 56,9" fill="#222"/>
+  <polygon points="40,10 36,13 38,18 43,19 46,14 44,9" fill="#222"/>
+  <polygon points="62,20 66,23 64,28 59,28 57,23 60,20" fill="#222"/>
+  <polygon points="38,20 34,23 36,28 41,28 43,23 40,20" fill="#222"/>
+  <!-- Cup shine -->
+  <path d="M28 38 Q30 54 28 66" fill="none" stroke="rgba(255,255,255,.6)" stroke-width="3" stroke-linecap="round"/>
+</svg>
         <div class="card-name">Stan's Game</div>
         <div class="card-sub">College Cup</div>
         <div class="card-meta">15 group rounds · 32-team knockout · Final at 9:16 PM</div>
       </button>
       <button class="comp-card" onclick="selectComp('club')">
-        <div class="card-icon">🏆</div>
+        <svg class="card-icon" viewBox="0 0 100 128" width="80" height="102" xmlns="http://www.w3.org/2000/svg">
+  <rect x="16" y="116" width="68" height="11" rx="5" fill="#50506a"/>
+  <rect x="12" y="108" width="76" height="10" rx="4" fill="#606078"/>
+  <rect x="18" y="100" width="64" height="10" rx="4" fill="#505068"/>
+  <rect x="36" y="76"  width="28" height="26" rx="2" fill="#7878a0"/>
+  <rect x="28" y="70"  width="44" height="8"  rx="3" fill="#606078"/>
+  <circle cx="50" cy="44" r="32" fill="rgba(150,150,200,.15)"/>
+  <circle cx="50" cy="44" r="28" fill="#50508a"/>
+  <circle cx="50" cy="44" r="24" fill="#6868a8"/>
+  <circle cx="50" cy="44" r="21" fill="#7878b8"/>
+  <ellipse cx="50" cy="44" rx="9"  ry="21" fill="none" stroke="rgba(200,200,255,.35)" stroke-width="2"/>
+  <ellipse cx="50" cy="44" rx="21" ry="7"  fill="none" stroke="rgba(200,200,255,.35)" stroke-width="2"/>
+  <line x1="29" y1="44" x2="71" y2="44" stroke="rgba(200,200,255,.35)" stroke-width="2"/>
+  <ellipse cx="50" cy="44" rx="14" ry="3"  fill="none" stroke="rgba(200,200,255,.2)"  stroke-width="1.5"/>
+  <circle  cx="50" cy="44" r="21" fill="none" stroke="rgba(200,200,255,.2)"  stroke-width="1"/>
+  <path d="M26 36 Q4  14 4  34 Q4  56 24 52" fill="none" stroke="#50507a" stroke-width="9" stroke-linecap="round"/>
+  <path d="M26 36 Q4  14 4  34 Q4  56 24 52" fill="none" stroke="#9090c0" stroke-width="5" stroke-linecap="round"/>
+  <path d="M74 36 Q96 14 96 34 Q96 56 76 52" fill="none" stroke="#50507a" stroke-width="9" stroke-linecap="round"/>
+  <path d="M74 36 Q96 14 96 34 Q96 56 76 52" fill="none" stroke="#9090c0" stroke-width="5" stroke-linecap="round"/>
+  <text x="26" y="17" fill="rgba(255,240,100,.85)" font-size="11" font-family="serif">★</text>
+  <text x="44" y="10" fill="rgba(255,240,100,.85)" font-size="11" font-family="serif">★</text>
+  <text x="62" y="17" fill="rgba(255,240,100,.85)" font-size="11" font-family="serif">★</text>
+  <path d="M38 30 Q40 40 38 52" fill="none" stroke="rgba(255,255,255,.3)" stroke-width="3" stroke-linecap="round"/>
+</svg>
         <div class="card-name">Doug's Game</div>
         <div class="card-sub">Club World Cup</div>
         <div class="card-meta">15 group rounds · 16-team knockout · Final at 8:55 PM</div>
@@ -822,47 +910,55 @@ const STAN_LOGOS={
   'Auburn':`${E}/ncaa/500/2.png`,'Boise St.':`${E}/ncaa/500/68.png`,
   'Weber St.':`${E}/ncaa/500/269.png`
 };
+const FD='https://crests.football-data.org';
 const DOUG_LOGOS={
-  'Arsenal':`${E}/soccer/500/359.png`,'Aston Villa':`${E}/soccer/500/1281.png`,
-  'Bournemouth':`${E}/soccer/500/349.png`,'Brentford':`${E}/soccer/500/337.png`,
-  'Brighton & Hove Albion':`${E}/soccer/500/331.png`,'Burnley':`${E}/soccer/500/333.png`,
-  'Chelsea':`${E}/soccer/500/363.png`,'Crystal Palace':`${E}/soccer/500/384.png`,
-  'Everton':`${E}/soccer/500/368.png`,'Fulham':`${E}/soccer/500/370.png`,
-  'Leeds United':`${E}/soccer/500/357.png`,'Liverpool':`${E}/soccer/500/364.png`,
-  'Manchester City':`${E}/soccer/500/382.png`,'Manchester United':`${E}/soccer/500/360.png`,
-  'Newcastle United':`${E}/soccer/500/361.png`,'Nottingham Forest':`${E}/soccer/500/393.png`,
-  'Sunderland':`${E}/soccer/500/379.png`,'Tottenham Hotspur':`${E}/soccer/500/367.png`,
-  'West Ham United':`${E}/soccer/500/371.png`,'Wolverhampton Wanderers':`${E}/soccer/500/380.png`,
-  'Inter Milan':`${E}/soccer/500/110.png`,'AC Milan':`${E}/soccer/500/103.png`,
-  'Napoli':`${E}/soccer/500/119.png`,'Juventus':`${E}/soccer/500/111.png`,
-  'Atalanta':`${E}/soccer/500/84.png`,'AS Roma':`${E}/soccer/500/104.png`,
-  'Lazio':`${E}/soccer/500/112.png`,'Fiorentina':`${E}/soccer/500/108.png`,
-  'Bologna':`${E}/soccer/500/85.png`,
-  'Bayern Munich':`${E}/soccer/500/131.png`,'Borussia Dortmund':`${E}/soccer/500/124.png`,
-  'Bayer Leverkusen':`${E}/soccer/500/125.png`,'RB Leipzig':`${E}/soccer/500/23826.png`,
-  'VfB Stuttgart':`${E}/soccer/500/134.png`,'Hoffenheim':`${E}/soccer/500/1885.png`,
-  'Mainz 05':`${E}/soccer/500/615.png`,'Eintracht Frankfurt':`${E}/soccer/500/130.png`,
-  'Wolfsburg':`${E}/soccer/500/816.png`,'Freiburg':`${E}/soccer/500/1859.png`,
-  'Barcelona':`${E}/soccer/500/83.png`,'Real Madrid':`${E}/soccer/500/86.png`,
-  'Atlético Madrid':`${E}/soccer/500/1068.png`,'Villarreal':`${E}/soccer/500/102.png`,
-  'Celta Vigo':`${E}/soccer/500/3821.png`,'Real Betis':`${E}/soccer/500/90.png`,
-  'Real Sociedad':`${E}/soccer/500/89.png`,'Sevilla':`${E}/soccer/500/92.png`,
-  'Athletic Club':`${E}/soccer/500/93.png`,'Valencia':`${E}/soccer/500/94.png`,
+  // EPL — football-data.org (verified IDs)
+  'Arsenal':`${FD}/57.png`,'Aston Villa':`${FD}/58.png`,
+  'Bournemouth':`${FD}/1044.png`,'Brentford':`${FD}/402.png`,
+  'Brighton & Hove Albion':`${FD}/397.png`,'Burnley':`${FD}/328.png`,
+  'Chelsea':`${FD}/61.png`,'Crystal Palace':`${FD}/354.png`,
+  'Everton':`${FD}/62.png`,'Fulham':`${FD}/63.png`,
+  'Leeds United':`${FD}/341.png`,'Liverpool':`${FD}/64.png`,
+  'Manchester City':`${FD}/65.png`,'Manchester United':`${FD}/66.png`,
+  'Newcastle United':`${FD}/67.png`,'Nottingham Forest':`${FD}/351.png`,
+  'Sunderland':`${E}/soccer/500/379.png`,
+  'Tottenham Hotspur':`${FD}/73.png`,
+  'West Ham United':`${FD}/563.png`,'Wolverhampton Wanderers':`${FD}/76.png`,
+  // Serie A — football-data.org
+  'Inter Milan':`${FD}/108.png`,'AC Milan':`${FD}/98.png`,
+  'Napoli':`${FD}/113.png`,'Juventus':`${FD}/109.png`,
+  'Atalanta':`${FD}/102.png`,'AS Roma':`${FD}/100.png`,
+  'Como 1907':`${E}/soccer/500/4966.png`,
+  'Lazio':`${FD}/110.png`,'Fiorentina':`${FD}/107.png`,'Bologna':`${FD}/103.png`,
+  // Bundesliga — football-data.org
+  'Bayern Munich':`${FD}/5.png`,'Borussia Dortmund':`${FD}/4.png`,
+  'Bayer Leverkusen':`${FD}/3.png`,'RB Leipzig':`${FD}/721.png`,
+  'VfB Stuttgart':`${FD}/10.png`,'Hoffenheim':`${FD}/714.png`,
+  'Mainz 05':`${FD}/11.png`,'Eintracht Frankfurt':`${FD}/19.png`,
+  'Wolfsburg':`${FD}/8.png`,'Freiburg':`${FD}/17.png`,
+  // La Liga — football-data.org
+  'Barcelona':`${FD}/81.png`,'Real Madrid':`${FD}/86.png`,
+  'Atlético Madrid':`${FD}/78.png`,'Villarreal':`${FD}/94.png`,
+  'Celta Vigo':`${FD}/558.png`,'Real Betis':`${FD}/90.png`,
+  'Real Sociedad':`${FD}/92.png`,'Sevilla':`${FD}/559.png`,
+  'Athletic Club':`${FD}/77.png`,'Valencia':`${FD}/95.png`,
+  // MLS — ESPN (verified IDs only; wrong ones removed → fallback chip)
   'Atlanta United FC':`${E}/soccer/500/19209.png`,'Austin FC':`${E}/soccer/500/24004.png`,
-  'Charlotte FC':`${E}/soccer/500/28663.png`,'Chicago Fire FC':`${E}/soccer/500/187.png`,
+  'Charlotte FC':`${E}/soccer/500/28663.png`,
   'FC Cincinnati':`${E}/soccer/500/21281.png`,'Colorado Rapids':`${E}/soccer/500/254.png`,
   'Columbus Crew':`${E}/soccer/500/188.png`,'D.C. United':`${E}/soccer/500/189.png`,
   'FC Dallas':`${E}/soccer/500/190.png`,'Houston Dynamo FC':`${E}/soccer/500/676.png`,
   'Sporting Kansas City':`${E}/soccer/500/191.png`,'LA Galaxy':`${E}/soccer/500/193.png`,
   'Los Angeles FC':`${E}/soccer/500/22788.png`,'Inter Miami CF':`${E}/soccer/500/24008.png`,
-  'Minnesota United FC':`${E}/soccer/500/9726.png`,'CF Montréal':`${E}/soccer/500/184.png`,
-  'Nashville SC':`${E}/soccer/500/24007.png`,'New England Revolution':`${E}/soccer/500/192.png`,
+  'CF Montréal':`${E}/soccer/500/184.png`,'Nashville SC':`${E}/soccer/500/24007.png`,
+  'New England Revolution':`${E}/soccer/500/192.png`,
   'New York Red Bulls':`${E}/soccer/500/194.png`,'New York City FC':`${E}/soccer/500/18809.png`,
   'Orlando City SC':`${E}/soccer/500/20232.png`,'Philadelphia Union':`${E}/soccer/500/16840.png`,
   'Portland Timbers':`${E}/soccer/500/10671.png`,'Real Salt Lake':`${E}/soccer/500/14879.png`,
   'San Jose Earthquakes':`${E}/soccer/500/195.png`,'Seattle Sounders FC':`${E}/soccer/500/9726.png`,
   'St. Louis CITY SC':`${E}/soccer/500/23992.png`,'Toronto FC':`${E}/soccer/500/10022.png`,
   'Vancouver Whitecaps FC':`${E}/soccer/500/15015.png`,
+  // Liga MX — ESPN
   'América':`${E}/soccer/500/5754.png`,'Atlas':`${E}/soccer/500/3763.png`,
   'Cruz Azul':`${E}/soccer/500/5680.png`,'Guadalajara':`${E}/soccer/500/5756.png`,
   'León':`${E}/soccer/500/3745.png`,'Monterrey':`${E}/soccer/500/5761.png`,

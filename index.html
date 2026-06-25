@@ -176,6 +176,18 @@ body{margin:0;color:var(--ink);font-family:var(--body);-webkit-font-smoothing:an
 .konote{max-width:60ch;color:var(--ink-soft);font-size:16px;line-height:1.55;margin:0 0 22px}
 .konote.small{font-size:14px;margin:0 0 14px}
 .bkscroll{overflow-x:auto;padding:6px 0 14px;-webkit-overflow-scrolling:touch}
+.brkt-scroll{overflow-x:auto;padding:0 0 16px}
+.brkt-wrap{display:flex;gap:0;align-items:flex-start;min-width:max-content}
+.brkt-col{display:flex;flex-direction:column;width:184px;flex-shrink:0;border-right:1px solid var(--line)}
+.brkt-col:last-child{border-right:none}
+.brkt-rnd-hdr{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--blue-deep);padding:0 10px 10px;white-space:nowrap}
+.brkt-slot{display:flex;align-items:center;padding:2px 10px;box-sizing:border-box}
+.brkt-card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:7px 10px;width:100%}
+.brkt-fld{font-size:9px;font-family:var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px}
+.brkt-t{font-size:12px;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:1px 0}
+.brkt-t.tbd{color:var(--muted);font-weight:400;font-style:italic}
+.brkt-div{border-top:1px solid var(--line);margin:4px 0}
+.brkt-sc{font-size:11px;font-family:var(--mono);color:var(--blue);font-weight:700;margin-top:3px}
 .bksvg{display:block;width:100%;min-width:900px;height:auto}
 .bklbl{fill:var(--ink);font-family:var(--display);font-size:15px;letter-spacing:.04em;text-transform:uppercase}
 .bkbox{fill:#fff;stroke:var(--line);stroke-width:1.5}.bkdiv{stroke:var(--line);stroke-width:1}
@@ -184,11 +196,11 @@ body{margin:0;color:var(--ink);font-family:var(--body);-webkit-font-smoothing:an
 .bkchamp .bkbox{fill:var(--blue-soft);stroke:var(--blue)}.bkchamp .bkslot{fill:var(--ink-on-blue);font-weight:700}
 .scrollhint{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:2px 0 0}
 .timeline{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--card);box-shadow:var(--shadow-sm)}
-.tl{display:flex;align-items:center;gap:14px;padding:13px 16px;border-bottom:1px solid var(--line)}
-.tl:last-child{border-bottom:none}
-.tl .rnd{font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--blue-deep);min-width:104px;font-weight:700}
-.tl .st{font-weight:600;flex:1}.tl .tm{font-family:var(--mono);font-size:12px;color:var(--muted);white-space:nowrap}
-.tl.major{background:var(--blue-tint)}.tl.rest{color:var(--muted)}.tl.rest .st{font-weight:500}
+
+
+
+
+
 
 /* ---- QUALIFIER STANDINGS ---- */
 .groups{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:16px;margin-top:4px}
@@ -431,9 +443,6 @@ footer{margin-top:60px;border-top:1px solid var(--line);background:#fff}
     <p class="eyebrow">Knockout Stage · How the title is decided</p>
     <h2>The Road to the Title</h2>
     <p class="konote" id="koNote"></p>
-    <div class="block"><h3>Tournament timeline</h3>
-      <div class="timeline" id="timeline"></div>
-    </div>
     <div class="block"><h3>Group Stage · live standings</h3>
       <p class="konote small">Each group is named by a letter. Standings update automatically as scores are entered.</p>
       <div id="groups" class="groups">
@@ -488,7 +497,7 @@ const COMPETITIONS={
     id:'tkw',name:'Team Keeper Wars',subtitle:'The Camp Shutout World Cup',
     tagline:'90 nations · 841 games · one champion',showTicker:true,
     sheetId:'1mObczfEIWBT_S4gza7eHjTv1HvqcUb66QtSl5AU4lD0',
-    rosterTab:'Team Generator',schedTab:'Team Schedule',minSchedule:10,
+    rosterTab:'Team Generator',schedTab:'Team Schedule',minSchedule:10,bracketPubUrl:'https://docs.google.com/spreadsheets/d/e/2PACX-1vR0NH8EgY33gw3H8N4m7_Y-R6qN13XImLiVBWI_Zvu9SW4FekLVgaUqak1KJbh4_sDYke9wW-nkxUqM/pub?gid=1776573154&single=true&output=csv',bracketColOffset:12,groupPlayPubUrl:'https://docs.google.com/spreadsheets/d/e/2PACX-1vR0NH8EgY33gw3H8N4m7_Y-R6qN13XImLiVBWI_Zvu9SW4FekLVgaUqak1KJbh4_sDYke9wW-nkxUqM/pub?gid=1050495143&single=true&output=csv',
     rosterPubUrl:'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ98bPV7TYvvdj1wWCWsqbPxGet7BEzq57EPwG8Jqm2CzuCSnL4yD1PNhSsp4QSySsIKSarGiWpYXUt/pub?output=csv',
     schedPubUrl:'https://docs.google.com/spreadsheets/d/e/2PACX-1vR0NH8EgY33gw3H8N4m7_Y-R6qN13XImLiVBWI_Zvu9SW4FekLVgaUqak1KJbh4_sDYke9wW-nkxUqM/pub?output=csv',
     groupScoreUrls:['https://docs.google.com/spreadsheets/d/e/2PACX-1vQTypEIn7iJgXrO82p2he3bqAVBXiDH9IUOLmAX--ri0zTeGaOtW2tqOEyvS__HRTojJhWqLJ41fBxC/pub?output=csv','https://docs.google.com/spreadsheets/d/e/2PACX-1vTq3u1FnS-4sWs0xkUEpoNL9lc1IoxWvdB1_Lk0BwEbBBPtFCVqoqLXQQZf5AhdRQB-T6gaeuOoGi7g/pub?output=csv','https://docs.google.com/spreadsheets/d/e/2PACX-1vRfgIwAF14mHU79EsCyBeayREpNYabPUnl1q7cz-ksCwpd0_bMy0ILusbQvUbyvj3uGf3Z_kT7-DCv9/pub?output=csv','https://docs.google.com/spreadsheets/d/e/2PACX-1vSo4jxk5oO_A4MbF7jOdyqV-INfhFFIb9-H2C7JeCDqLr49_xa61nkFrMnVR4TwXwH-0Sgg4xcJv808/pub?output=csv','https://docs.google.com/spreadsheets/d/e/2PACX-1vR_SKIQib67HGkxluQCIkuSQm5booriZi2nAy7QukAVefVhxv49_wKeDzh5KkgaZr99L2HrSMeBJ5Q_/pub?output=csv','https://docs.google.com/spreadsheets/d/e/2PACX-1vRxqg1ZuAV19SMg8erLVYID5E-5KOmsUTcYh12tFsfCgUGDfS2c6kC0YB0oPsstKDv1fj0Wgn4NStBR/pub?output=csv','https://docs.google.com/spreadsheets/d/e/2PACX-1vTFwqzfCvu_zjLWYN3xn591zfYdl0sdtljgSixgL8aDiPTLFcwiqxzc09dNepqhr6tyG3io_rqG6rhx/pub?output=csv','https://docs.google.com/spreadsheets/d/e/2PACX-1vS4e1gHbOzG6xmPZNulJ3cUbBscMJeSUFBSK6GPCQJVmVbXuvR_S8ksF9NIkI9cGQwrbWxqywlHHs01/pub?output=csv','https://docs.google.com/spreadsheets/d/e/2PACX-1vT2ZOjUDzlL8Gqwlh7Br4LfHQ2QfdM45pl2RNI76XEFFsGHUmwRFpGe6kdUfwmvkG8RWMCS9Rs1AOB4/pub?output=csv'],
@@ -528,7 +537,7 @@ const COMPETITIONS={
     id:'college',name:"Stan's Game",subtitle:'College Cup',
     tagline:'100 teams · 10 groups · 32-team knockout · one champion',showTicker:false,
     sheetId:'1EURcHF3OZZiA4BvjVk-7qQkvJB6740CgmzXEwmUxweE',
-    rosterTab:'Teams',schedTab:'Team Schedules',rosterPubUrl:'https://docs.google.com/spreadsheets/d/e/2PACX-1vSYA10s9r4kYpRkZjJIfbNvHkXFUdR7R4G3skVpMrrMeVaInpUs6rtq7Dw38I-fvTcQvLQVCwwIsMWM/pub?gid=422272405&single=true&output=csv',schedPubUrl:'https://docs.google.com/spreadsheets/d/e/2PACX-1vSYA10s9r4kYpRkZjJIfbNvHkXFUdR7R4G3skVpMrrMeVaInpUs6rtq7Dw38I-fvTcQvLQVCwwIsMWM/pub?output=csv',minSchedule:10,
+    rosterTab:'Teams',schedTab:'Team Schedules',rosterPubUrl:'https://docs.google.com/spreadsheets/d/e/2PACX-1vSYA10s9r4kYpRkZjJIfbNvHkXFUdR7R4G3skVpMrrMeVaInpUs6rtq7Dw38I-fvTcQvLQVCwwIsMWM/pub?gid=422272405&single=true&output=csv',schedPubUrl:'https://docs.google.com/spreadsheets/d/e/2PACX-1vSYA10s9r4kYpRkZjJIfbNvHkXFUdR7R4G3skVpMrrMeVaInpUs6rtq7Dw38I-fvTcQvLQVCwwIsMWM/pub?output=csv',minSchedule:10,bracketPubUrl:'https://docs.google.com/spreadsheets/d/e/2PACX-1vSYA10s9r4kYpRkZjJIfbNvHkXFUdR7R4G3skVpMrrMeVaInpUs6rtq7Dw38I-fvTcQvLQVCwwIsMWM/pub?gid=1775683329&single=true&output=csv',bracketColOffset:0,
     groupScoreUrls:['https://docs.google.com/spreadsheets/d/e/2PACX-1vTA5WXr59UEivbtZuDzgi5vHPeLmccUSA2Xq-Rfu-j3F_BSbUK9ZLHyq4fB1MS3tHw9HNhqdjyRWlM-/pub?output=csv','https://docs.google.com/spreadsheets/d/e/2PACX-1vQta9r8gyfR34ONG2XkpOI94gUVCx0-yc1hwZsp7DEvhh-J5M6Jxvuaw3sDZWLztuZYxg8RkrroqtEJ/pub?output=csv','https://docs.google.com/spreadsheets/d/e/2PACX-1vQt1mkG6jEWxAhOstXp7n1ma5iGon40UavpHdnsmSbiHX2UUXEFDkiY5Stv6iNw5BPGTeSC1wNzD1rq/pub?output=csv','https://docs.google.com/spreadsheets/d/e/2PACX-1vRZn59WWUnRW0ePz9XXGdyPfKWZJKExN1dc-siiwo95mocGpMEXFqs6tDIqkMMiLzElH0wCLpyyGPIv/pub?output=csv','https://docs.google.com/spreadsheets/d/e/2PACX-1vQqjMZrtL-o3OutTZIc4-3xP5a4mbj-49B8Fh5FFH7KE2psyxCxAGcEil9vqsORahoU2WYfUDlO27YZ/pub?output=csv','https://docs.google.com/spreadsheets/d/e/2PACX-1vSeybAhqMhCaZDW5inHWC5BuSM7zuRgVNNwWVkOHvwK0VsMJxT5zy2hhM3jUWTXlr4kaB54021EPcaL/pub?output=csv','https://docs.google.com/spreadsheets/d/e/2PACX-1vR51eWhQtabgE-hrdluczsvA7pkpKWvot8ntvJ83HHxYf-0tmgFNj31Y9xZAZGatA9pepwjV60-2tmn/pub?output=csv','https://docs.google.com/spreadsheets/d/e/2PACX-1vR09NpEtd9JPal4cVk9DOQ7JsKSfuJkvtwTEU9pqRflRJ7kk4FI7W1B8oD5lsnOlhM7ylynj7f-2rde/pub?output=csv','https://docs.google.com/spreadsheets/d/e/2PACX-1vRrjTx2j7PRUyUxJRtl2JAQ9TD5WtHjeghy084PyXeP0Y3UFar3IP_nSXaFTeVKGXSY3LcPocGzmGzN/pub?output=csv','https://docs.google.com/spreadsheets/d/e/2PACX-1vRj2LDLBTT-4SqgUW6uy6hI2g-eZpx2G7MZ8xT9opj4P5TCzPEYaxQWxdV9uYzl8_1ujP9flAeRXJVo/pub?output=csv'],
     groupScoreTab:'Group 1',
     groupScoreIds:[
@@ -565,7 +574,7 @@ const COMPETITIONS={
     id:'club',name:"Doug's Game",subtitle:'Club World Cup',
     tagline:'90 clubs · 9 groups · 16-team knockout · one champion',showTicker:false,
     sheetId:'16JbRik_eXqHajmEA2NNzfP-uIyJuiGhespmw8i2lWJo',
-    rosterTab:'Teams',schedTab:'Team Schedules',rosterPubUrl:'https://docs.google.com/spreadsheets/d/e/2PACX-1vTuOHITU-841V74POglViaijSsgNqtTLBtx7ExCLSF3XeojkAwxTQJ8FgGU7JxHsWNP_t5JXMhETkXc/pub?gid=422272405&single=true&output=csv',schedPubUrl:'https://docs.google.com/spreadsheets/d/e/2PACX-1vTuOHITU-841V74POglViaijSsgNqtTLBtx7ExCLSF3XeojkAwxTQJ8FgGU7JxHsWNP_t5JXMhETkXc/pub?output=csv',minSchedule:10,
+    rosterTab:'Teams',schedTab:'Team Schedules',rosterPubUrl:'https://docs.google.com/spreadsheets/d/e/2PACX-1vTuOHITU-841V74POglViaijSsgNqtTLBtx7ExCLSF3XeojkAwxTQJ8FgGU7JxHsWNP_t5JXMhETkXc/pub?gid=422272405&single=true&output=csv',schedPubUrl:'https://docs.google.com/spreadsheets/d/e/2PACX-1vTuOHITU-841V74POglViaijSsgNqtTLBtx7ExCLSF3XeojkAwxTQJ8FgGU7JxHsWNP_t5JXMhETkXc/pub?output=csv',minSchedule:10,bracketPubUrl:'https://docs.google.com/spreadsheets/d/e/2PACX-1vTuOHITU-841V74POglViaijSsgNqtTLBtx7ExCLSF3XeojkAwxTQJ8FgGU7JxHsWNP_t5JXMhETkXc/pub?gid=1775683329&single=true&output=csv',bracketColOffset:0,
     groupScoreUrls:['https://docs.google.com/spreadsheets/d/e/2PACX-1vQvGG2G6PFccXvwYJvqxjAAG4wxCwbm5k6UQAmKEf9kTG52ip_zdFB_jKREznxygJvrDGGZGryLC9ET/pub?output=csv','https://docs.google.com/spreadsheets/d/e/2PACX-1vTV3m9cerM_fNWWal6sAUPkMN-hYxz1nP9tEWbzrxm8xBBvX-UV4gN4-ukxgbXE2YM34XWhBhyXRzVW/pub?output=csv','https://docs.google.com/spreadsheets/d/e/2PACX-1vSXMtlBcCR87Zw0cN6TmQF7S1pu9u_STraokZ8YxZvbTXNSyPf_wo2k8FvL2GYRXfIURK8napqihAaK/pub?output=csv','https://docs.google.com/spreadsheets/d/e/2PACX-1vSEJByrQa4dNs3xJWhW7diMw6hT1bxCO7qQ76rthfUoAJyqrPGfEPy-Cnc6R62T_QWo6g7WUN-d1Cgb/pub?output=csv','https://docs.google.com/spreadsheets/d/e/2PACX-1vTi0HaRt3BdArHGse90riEhRInDgS2GoyKdMthb1llw9Yb1fGaTvu2eIHExbzRGwrLG5GYjKNVaNXVO/pub?output=csv','https://docs.google.com/spreadsheets/d/e/2PACX-1vTx9IplcJm6k3xIuTRONxKCxlplABDQtkWbBuSE2qGV8Lg01qk9RTe_9hEJ4OHUbBFR_aDN6fQelJWb/pub?output=csv','https://docs.google.com/spreadsheets/d/e/2PACX-1vQv7XVgi10jfdEdNLcijP85lpd99DbimuLi8IdZWxmNdr0o0aAp3sb4bn7hNKswqoQU4e6-VsRs0V3I/pub?output=csv','https://docs.google.com/spreadsheets/d/e/2PACX-1vTH3otamVdFiZcX084GiT8ta5XS3tY-B7ZWHP2VufE4ndblVfQVRqC3jHB9-VJ7RecRrQvtWiV1S8hh/pub?output=csv','https://docs.google.com/spreadsheets/d/e/2PACX-1vSOkpjOJUPJNv3nPK4JDe_-in0iK8n-AxNR5IEdCX6lJcq25XQ_E10JwfHEyr1ylZ8S9abE7_adnjqF/pub?output=csv'],
     groupScoreTab:'Group 1',
     groupScoreIds:[
@@ -610,7 +619,7 @@ const CONF_FULL={
 let ACTIVE=null;
 let SCHEDULE={},TEAMS=[],INDEX=[],COUNTRY2TEAM={},OPP={};
 let SCORES={},QUAL_STANDINGS={},LAST_UPDATED=null;
-let GROUPS_LOADING=false,lastChoice=null,bracketBuilt=false;
+let GROUPS_LOADING=false,lastChoice=null;
 
 /* ============ SEEDED DATA (TKW UEFA #2 snapshot) ============ */
 const TKW_SEED_STANDINGS={
@@ -1042,12 +1051,7 @@ function updateSectionText(){
 }
 
 /* ============ TIMELINE ============ */
-function buildTimeline(){
-  const host=document.getElementById('timeline');if(!host||!ACTIVE)return;
-  host.innerHTML=ACTIVE.timeline.map(t=>{
-    const cls='tl'+(t.major?' major':'')+(t.rest?' rest':'');
-    return `<div class="${cls}"><span class="rnd">${esc(t.rnd)}</span><span class="st">${esc(t.stage)}</span><span class="tm">${esc(t.time)}</span></div>`;
-  }).join('');}
+
 
 /* ============ SEARCH ============ */
 const q=document.getElementById('q'),sg=document.getElementById('suggest');
@@ -1255,47 +1259,83 @@ async function loadGroupData(){
     }));}
   LAST_UPDATED=new Date();GROUPS_LOADING=false;
   if(btn)btn.classList.remove('spin');
-  buildQualStandings();if(lastChoice)renderResult(lastChoice);}
+  buildQualStandings();if(lastChoice)renderResult(lastChoice);
+  const _kot=document.getElementById('tab-ko');if(_kot&&_kot.classList.contains('active'))fetchBracketData();}
 
 /* ============ BRACKET ============ */
-function buildBracket(size){
+
+let BRACKET_DATA=null,BRACKET_LOADING=false,GPLAY_DATA=null;
+
+function parseBracketCSV(csv,O){
+  O=O||0;
+  const rows=csv.split('\n').map(l=>parseCSV(l));
+  let hi=rows.findIndex(r=>r.some(c=>/round of 32/i.test(String(c||''))||/round of 16/i.test(String(c||''))));
+  if(hi<0)return null;
+  const hasR32=rows[hi].some(c=>/round of 32/i.test(String(c||'')));
+  hi++;
+  const data=rows.slice(hi);
+  const cl=v=>String(v||'').replace(/\n/g,' ').trim();
+  const col=c=>data.map(r=>cl(r[c])).filter(v=>v);
+  const mkGames=(fc,tc,sc)=>{const fs=col(fc),ts=col(tc),ss=col(sc);return fs.map((f,i)=>({field:f,t1:ts[i*2]||'',t2:ts[i*2+1]||'',score:ss[i]||''}));};
+  if(hasR32){const ft=col(O+12);return{rounds:[{name:'Round of 32',games:mkGames(O,O+1,O+2)},{name:'Round of 16',games:mkGames(O+3,O+4,O+5)},{name:'Quarterfinals',games:mkGames(O+6,O+7,O+8)},{name:'Semi-Finals',games:mkGames(O+9,O+10,O+11)},{name:'Final',games:ft.length?[{field:'',t1:ft[0]||'',t2:ft[1]||'',score:''}]:[]}]};}
+  else{const ft=col(O+9);return{rounds:[{name:'Round of 16',games:mkGames(O,O+1,O+2)},{name:'Quarterfinals',games:mkGames(O+3,O+4,O+5)},{name:'Semi-Finals',games:mkGames(O+6,O+7,O+8)},{name:'Final',games:ft.length?[{field:'',t1:ft[0]||'',t2:ft[1]||'',score:''}]:[]}]};}
+}
+
+function parseTKWGroupPlay(csv){
+  const rows=csv.split('\n').map(l=>parseCSV(l));
+  const cl=v=>String(v||'').replace(/\n/g,' ').trim();
+  let hdr=rows.findIndex(r=>r.some(c=>/^Group [A-Z]$/.test(cl(c))));
+  if(hdr<0)return[];
+  const hdrRow=rows[hdr],groups=[];
+  for(let gc=0;gc<hdrRow.length;gc+=7){
+    const gname=cl(hdrRow[gc]);
+    if(!gname||!/^Group [A-Z]/.test(gname))continue;
+    const fieldRow=hdr>0?rows[hdr-1]:[];
+    const field=fieldRow?cl((fieldRow[gc+2]||'')):'';
+    const matches=[];
+    for(let r=hdr+1;r<rows.length;r++){const row=rows[r]||[];const rnd=cl(row[gc+1]),home=cl(row[gc+2]),away=cl(row[gc+5]),s1=cl(row[gc+3]),s2=cl(row[gc+4]);if(home||away)matches.push({rnd,home,away,s1,s2});}
+    if(matches.length)groups.push({name:gname,field,matches});
+  }
+  return groups;
+}
+
+function buildBracket(){
   const host=document.getElementById('bracket');if(!host)return;
-  const rounds=size===32
-    ?[{n:'Round of 32',c:16},{n:'Round of 16',c:8},{n:'Quarterfinals',c:4},{n:'Semifinals',c:2},{n:'Final',c:1}]
-    :[{n:'Round of 16',c:8},{n:'Quarterfinals',c:4},{n:'Semifinals',c:2},{n:'Final',c:1}];
-  const W=150,H=48,colGap=60,vGap=12,padT=44,padL=14;
-  const pitch0=H+vGap;const cen=[];
-  rounds.forEach((rd,r)=>{cen[r]=[];for(let i=0;i<rd.c;i++){
-    cen[r][i]=r===0?padT+i*pitch0+H/2:(cen[r-1][2*i]+cen[r-1][2*i+1])/2;}});
-  const colX=r=>padL+r*(W+colGap);
-  const champX=colX(rounds.length-1)+W+colGap;
-  const totalH=padT+rounds[0].c*pitch0+6;
-  const totalW=champX+W+padL;
-  let s=`<svg class="bksvg" viewBox="0 0 ${totalW} ${totalH}" role="img" aria-label="${size}-team knockout bracket">`;
-  for(let r=1;r<rounds.length;r++){for(let i=0;i<rounds[r].c;i++){
-    const x0=colX(r-1)+W,x1=colX(r),midX=(x0+x1)/2;
-    const yT=cen[r-1][2*i],yB=cen[r-1][2*i+1],yM=cen[r][i];
-    s+=`<path class="bkdiv" d="M${x0} ${yT} H${midX} V${yB} H${x0} M${midX} ${yM} H${x1}" fill="none"/>`;}}
-  const fy=cen[rounds.length-1][0];
-  s+=`<path class="bkdiv" d="M${colX(rounds.length-1)+W} ${fy} H${champX}" fill="none"/>`;
-  rounds.forEach((rd,r)=>{s+=`<text class="bklbl" x="${colX(r)}" y="24">${rd.n}</text>`;});
-  s+=`<text class="bklbl" x="${champX}" y="24">Champion</text>`;
-  let seed=1;
-  rounds.forEach((rd,r)=>{for(let i=0;i<rd.c;i++){
-    const x=colX(r),y=cen[r][i]-H/2;
-    s+=`<rect class="bkbox" x="${x}" y="${y}" width="${W}" height="${H}" rx="9"/>`;
-    s+=`<line class="bkdiv" x1="${x}" y1="${y+H/2}" x2="${x+W}" y2="${y+H/2}"/>`;
-    if(r===0){
-      s+=`<text class="bkseed" x="${x+11}" y="${y+H/4+4}">${seed}</text><text class="bkslot" x="${x+30}" y="${y+H/4+4}">TBD</text>`;
-      s+=`<text class="bkseed" x="${x+11}" y="${y+3*H/4+4}">${seed+1}</text><text class="bkslot" x="${x+30}" y="${y+3*H/4+4}">TBD</text>`;
-      seed+=2;
-    }else{
-      s+=`<text class="bkslot" x="${x+12}" y="${y+H/4+4}">TBD</text>`;
-      s+=`<text class="bkslot" x="${x+12}" y="${y+3*H/4+4}">TBD</text>`;}}}); 
-  const cy=fy-H/2;
-  s+=`<g class="bkchamp"><rect class="bkbox" x="${champX}" y="${cy}" width="${W}" height="${H}" rx="9"/>`;
-  s+=`<text class="bkslot" x="${champX+12}" y="${cy+H/2+5}">TBD — Champion</text></g>`;
-  s+=`</svg>`;host.innerHTML=s;}
+  const hint=document.getElementById('brktHint');
+  if(!BRACKET_DATA||!BRACKET_DATA.rounds){host.innerHTML='<div class="ko-empty" style="padding:24px">Bracket loads when playoff sheet is connected.</div>';if(hint)hint.style.display='none';return;}
+  const rounds=BRACKET_DATA.rounds;
+  const slotH=52;
+  host.innerHTML=rounds.map((rnd,ri)=>{
+    const gpSlot=Math.pow(2,ri),slotPx=slotH*gpSlot;
+    const cards=rnd.games.map(g=>{
+      const fld=g.field?`<div class="brkt-fld">${esc(g.field)}</div>`:'';
+      const sc=g.score?`<div class="brkt-sc">${esc(g.score)}</div>`:'';
+      return `<div class="brkt-slot" style="height:${slotPx}px"><div class="brkt-card">${fld}<div class="brkt-t${g.t1?'':' tbd'}">${esc(g.t1||'TBD')}</div><div class="brkt-div"></div><div class="brkt-t${g.t2?'':' tbd'}">${esc(g.t2||'TBD')}</div>${sc}</div></div>`;
+    }).join('');
+    return `<div class="brkt-col"><div class="brkt-rnd-hdr">${esc(rnd.name)}</div>${cards}</div>`;
+  }).join('');
+  if(hint)hint.style.display='block';
+}
+
+function buildGroupPlaySection(){
+  const block=document.getElementById('gplay-block'),host=document.getElementById('gplay');
+  if(!block||!host)return;
+  if(!GPLAY_DATA||!GPLAY_DATA.length){block.style.display='none';return;}
+  block.style.display='';
+  host.innerHTML=`<div class="gplay-wrap">${GPLAY_DATA.map(g=>`<div class="gplay-group"><div class="gplay-hdr">${esc(g.name)}</div>${g.field?`<div class="gplay-fld">${esc(g.field)}</div>`:''}<div>${g.matches.map(m=>{const sc=(m.s1||m.s2)?`<span class="gplay-sc">${esc(m.s1||'-')}:${esc(m.s2||'-')}</span>`:`<span class="gplay-sc">vs</span>`;return`<div class="gplay-match"><span class="gplay-rnd">R${esc(m.rnd)}</span><span class="gplay-team">${esc(m.home)}</span>${sc}<span class="gplay-team" style="text-align:right">${esc(m.away)}</span></div>`;}).join('')}</div></div>`).join('')}</div>`;
+}
+
+async function fetchBracketData(){
+  if(!ACTIVE||BRACKET_LOADING)return;
+  BRACKET_LOADING=true;
+  try{
+    if(ACTIVE.bracketPubUrl){const r=await fetch(ACTIVE.bracketPubUrl,{cache:'no-store'});if(r.ok){const t=await r.text();if(!t.trim().startsWith('<!'))BRACKET_DATA=parseBracketCSV(t,ACTIVE.bracketColOffset||0);}}
+    if(ACTIVE.groupPlayPubUrl){const r=await fetch(ACTIVE.groupPlayPubUrl,{cache:'no-store'});if(r.ok){const t=await r.text();if(!t.trim().startsWith('<!'))GPLAY_DATA=parseTKWGroupPlay(t);}}
+  }catch(e){}
+  BRACKET_LOADING=false;
+  buildBracket();buildGroupPlaySection();
+}
+
 
 /* ============ FIELD MAP ============ */
 function openFieldMap(){const lb=document.getElementById('lightbox');if(!lb)return;
@@ -1318,7 +1358,7 @@ window.openFieldMap=openFieldMap;
     document.querySelectorAll('.tabpanel').forEach(p=>p.classList.remove('active'));
     this.classList.add('active');this.setAttribute('aria-selected','true');
     const panel=document.getElementById('tab-'+id);if(panel)panel.classList.add('active');
-    if(id==='ko'&&!bracketBuilt&&ACTIVE){buildBracket(ACTIVE.bracketSize);bracketBuilt=true;}
+    if(id==='ko'&&ACTIVE)fetchBracketData();
     if(id==='standings'){const h=document.getElementById('qualStandings');if(h&&!h.children.length)buildQualStandings();}
   }));})();
 
@@ -1354,15 +1394,16 @@ function selectComp(id){
   // reset state
   SCHEDULE={};TEAMS=[];INDEX=[];COUNTRY2TEAM={};OPP={};
   SCORES={};QUAL_STANDINGS={};LAST_UPDATED=null;
-  GROUPS_LOADING=false;lastChoice=null;bracketBuilt=false;
+  GROUPS_LOADING=false;lastChoice=null;
   if(GROUPS_TIMER){clearInterval(GROUPS_TIMER);GROUPS_TIMER=null;}
   // seed TKW snapshot
+  BRACKET_DATA=null;GPLAY_DATA=null;
   if(id==='tkw'){
     Object.assign(QUAL_STANDINGS,TKW_SEED_STANDINGS);
     TKW_SEED_SCORES.forEach(([rd,h,hs,as,a])=>{
       SCORES[h+'@'+rd]={gf:hs,ga:as,opp:a};SCORES[a+'@'+rd]={gf:as,ga:hs,opp:h};});}
   // update UI
-  updateHero();updateStats();updateSectionText();buildTimeline();buildQualStandings();
+  updateHero();updateStats();updateSectionText();buildQualStandings();
   resetSearch();
   // reset tabs to finder
   document.querySelectorAll('.tab').forEach(b=>{b.classList.remove('active');b.setAttribute('aria-selected','false');});

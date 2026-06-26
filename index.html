@@ -1234,12 +1234,32 @@ async function loadGroupData(){
   const btn=document.getElementById('qualRefresh');if(btn)btn.classList.add('spin');
   const _write=(grid)=>{
     const conf=detectConfFromGrid(grid);
-    const st=(parseStandingsGrid(grid)||[]).filter(r=>SCHEDULE[r.team]);
-    if(conf&&st.length)QUAL_STANDINGS[conf]=st;
-    parseGroupScores(grid).forEach(m=>{
+    if(!conf)return conf;
+    // Parse game scores first (used for schedule display)
+    const games=parseGroupScores(grid);
+    games.forEach(m=>{
       if(SCHEDULE[m.home]&&SCHEDULE[m.away]){
         SCORES[m.home+'@'+m.round]={gf:m.hs,ga:m.as,opp:m.away};
         SCORES[m.away+'@'+m.round]={gf:m.as,ga:m.hs,opp:m.home};}});
+    // Try pre-formatted standings table first
+    let st=(parseStandingsGrid(grid)||[]).filter(r=>SCHEDULE[r.team]);
+    // If no standings table, compute from game scores
+    if(!st.length&&games.length){
+      const tbl={};
+      Object.keys(SCHEDULE).filter(t=>SCHEDULE[t].conf===conf).forEach(t=>{tbl[t]={team:t,w:0,d:0,l:0,gf:0,ga:0,pts:0};});
+      games.forEach(({home,away,hs,as})=>{
+        if(!tbl[home]||!tbl[away])return;
+        tbl[home].gf+=hs;tbl[home].ga+=as;
+        tbl[away].gf+=as;tbl[away].ga+=hs;
+        if(hs>as){tbl[home].w++;tbl[home].pts+=3;tbl[away].l++;}
+        else if(hs<as){tbl[away].w++;tbl[away].pts+=3;tbl[home].l++;}
+        else{tbl[home].d++;tbl[home].pts++;tbl[away].d++;tbl[away].pts++;}});
+      st=Object.values(tbl)
+        .filter(r=>SCHEDULE[r.team])
+        .sort((a,b)=>b.pts-a.pts||((b.gf-b.ga)-(a.gf-a.ga))||b.gf-a.gf)
+        .map((r,i)=>({rank:String(i+1),team:r.team,pts:String(r.pts),gd:String(r.gf-r.ga)}));
+    }
+    if(st.length)QUAL_STANDINGS[conf]=st;
     return conf;};
   // Pass 1: published CSV URLs — guaranteed public, no auth checks ever
   if(pubUrls.length){
@@ -1261,12 +1281,15 @@ async function loadGroupData(){
         if(!grid)return;
         const conf=detectConfFromGrid(grid);
         if(conf&&!QUAL_STANDINGS[conf]){
-          const st=(parseStandingsGrid(grid)||[]).filter(r=>SCHEDULE[r.team]);
-          if(st.length)QUAL_STANDINGS[conf]=st;
-          parseGroupScores(grid).forEach(m=>{
-            if(SCHEDULE[m.home]&&SCHEDULE[m.away]){
-              SCORES[m.home+'@'+m.round]={gf:m.hs,ga:m.as,opp:m.away};
-              SCORES[m.away+'@'+m.round]={gf:m.as,ga:m.hs,opp:m.home};}});}
+          const games2=parseGroupScores(grid);
+          games2.forEach(m=>{if(SCHEDULE[m.home]&&SCHEDULE[m.away]){SCORES[m.home+'@'+m.round]={gf:m.hs,ga:m.as,opp:m.away};SCORES[m.away+'@'+m.round]={gf:m.as,ga:m.hs,opp:m.home};}});
+          let st2=(parseStandingsGrid(grid)||[]).filter(r=>SCHEDULE[r.team]);
+          if(!st2.length&&games2.length){
+            const tbl2={};
+            Object.keys(SCHEDULE).filter(t=>SCHEDULE[t].conf===conf).forEach(t=>{tbl2[t]={team:t,w:0,d:0,l:0,gf:0,ga:0,pts:0};});
+            games2.forEach(({home,away,hs,as})=>{if(!tbl2[home]||!tbl2[away])return;tbl2[home].gf+=hs;tbl2[home].ga+=as;tbl2[away].gf+=as;tbl2[away].ga+=hs;if(hs>as){tbl2[home].w++;tbl2[home].pts+=3;tbl2[away].l++;}else if(hs<as){tbl2[away].w++;tbl2[away].pts+=3;tbl2[home].l++;}else{tbl2[home].d++;tbl2[home].pts++;tbl2[away].d++;tbl2[away].pts++;}});
+            st2=Object.values(tbl2).filter(r=>SCHEDULE[r.team]).sort((a,b)=>b.pts-a.pts||((b.gf-b.ga)-(a.gf-a.ga))||b.gf-a.gf).map((r,i)=>({rank:String(i+1),team:r.team,pts:String(r.pts),gd:String(r.gf-r.ga)}));}
+          if(st2.length)QUAL_STANDINGS[conf]=st2;}
       }catch(e){}
     }));}
   LAST_UPDATED=new Date();GROUPS_LOADING=false;

@@ -1272,7 +1272,7 @@ async function loadGroupData(){
   LAST_UPDATED=new Date();GROUPS_LOADING=false;
   if(btn)btn.classList.remove('spin');
   buildQualStandings();if(lastChoice)renderResult(lastChoice);
-  const _kot=document.getElementById('tab-ko');if(_kot&&_kot.classList.contains('active'))fetchBracketData();}
+  const _kot=document.getElementById('tab-ko');if(_kot&&_kot.classList.contains('active')&&ACTIVE&&ACTIVE.groupPlayPubUrl)fetchBracketData();}
 
 /* ============ BRACKET ============ */
 
@@ -1333,13 +1333,10 @@ function parseTKWGroupPlay(csv){
 function buildBracket(size){
   const host=document.getElementById('bracket');if(!host||!ACTIVE)return;
   if(!size)size=ACTIVE.bracketSize||32;
-  const bd=BRACKET_DATA&&BRACKET_DATA.rounds?BRACKET_DATA.rounds:null;
-  const getG=(r,i)=>bd&&bd[r]&&bd[r].games[i]?bd[r].games[i]:{field:'',t1:'',t2:'',score:''};
-  const fldTxt=f=>(f||'').replace(/\n/g,' ').split(/[\s\/]+G\d+/i)[0].trim();
   const rounds=size===32
     ?[{n:'Round of 32',c:16},{n:'Round of 16',c:8},{n:'Quarterfinals',c:4},{n:'Semifinals',c:2},{n:'Final',c:1}]
     :[{n:'Round of 16',c:8},{n:'Quarterfinals',c:4},{n:'Semifinals',c:2},{n:'Final',c:1}];
-  const W=172,H=72,colGap=58,vGap=10,padT=44,padL=14;
+  const W=150,H=48,colGap=60,vGap=12,padT=44,padL=14;
   const pitch0=H+vGap;const cen=[];
   rounds.forEach((rd,r)=>{cen[r]=[];for(let i=0;i<rd.c;i++){
     cen[r][i]=r===0?padT+i*pitch0+H/2:(cen[r-1][2*i]+cen[r-1][2*i+1])/2;}});
@@ -1357,35 +1354,24 @@ function buildBracket(size){
   s+=`<path class="bkdiv" d="M${colX(rounds.length-1)+W} ${fy} H${champX}" fill="none"/>`;
   rounds.forEach((rd,r)=>{s+=`<text class="bklbl" x="${colX(r)}" y="24">${rd.n}</text>`;});
   s+=`<text class="bklbl" x="${champX}" y="24">Champion</text>`;
-  const showSeeds=size===32;let seed=1;
+  let seed=1;
   rounds.forEach((rd,r)=>{for(let i=0;i<rd.c;i++){
     const x=colX(r),y=cen[r][i]-H/2;
-    const g=getG(r,i);
-    const fld=fldTxt(g.field),t1=g.t1||'TBD',t2=g.t2||'TBD',score=g.score||'';
     s+=`<rect class="bkbox" x="${x}" y="${y}" width="${W}" height="${H}" rx="9"/>`;
-    const hasF=!!fld;
-    if(hasF){s+=`<text class="bkfld" x="${x+10}" y="${y+13}">${esc(fld)}</text>`;s+=`<line class="bkdiv" x1="${x}" y1="${y+18}" x2="${x+W}" y2="${y+18}"/>`;}
-    const rem=hasF?H-18:H;
-    const yT1=y+(hasF?18:0)+rem*0.33;
-    const yMid=y+(hasF?18:0)+rem*0.52;
-    const yT2=y+(hasF?18:0)+rem*0.75;
-    if(showSeeds&&r===0){
-      s+=`<text class="bkseed" x="${x+11}" y="${yT1}">${seed}</text><text class="bkslot${t1==='TBD'?' tbd':''}" x="${x+30}" y="${yT1}">${esc(t1)}</text>`;
-      s+=`<line class="bkdiv" x1="${x}" y1="${yMid}" x2="${x+W}" y2="${yMid}"/>`;
-      s+=`<text class="bkseed" x="${x+11}" y="${yT2}">${seed+1}</text><text class="bkslot${t2==='TBD'?' tbd':''}" x="${x+30}" y="${yT2}">${esc(t2)}</text>`;
+    s+=`<line class="bkdiv" x1="${x}" y1="${y+H/2}" x2="${x+W}" y2="${y+H/2}"/>`;
+    if(r===0){
+      s+=`<text class="bkseed" x="${x+11}" y="${y+H/4+4}">${seed}</text><text class="bkslot" x="${x+30}" y="${y+H/4+4}">TBD</text>`;
+      s+=`<text class="bkseed" x="${x+11}" y="${y+3*H/4+4}">${seed+1}</text><text class="bkslot" x="${x+30}" y="${y+3*H/4+4}">TBD</text>`;
       seed+=2;
     }else{
-      s+=`<text class="bkslot${t1==='TBD'?' tbd':''}" x="${x+12}" y="${yT1}">${esc(t1)}</text>`;
-      s+=`<line class="bkdiv" x1="${x}" y1="${yMid}" x2="${x+W}" y2="${yMid}"/>`;
-      s+=`<text class="bkslot${t2==='TBD'?' tbd':''}" x="${x+12}" y="${yT2}">${esc(t2)}</text>`;}
-    if(score)s+=`<text class="bkscr" x="${x+W/2}" y="${y+H-4}">${esc(score)}</text>`;
+      s+=`<text class="bkslot" x="${x+12}" y="${y+H/4+4}">TBD</text>`;
+      s+=`<text class="bkslot" x="${x+12}" y="${y+3*H/4+4}">TBD</text>`;}
   }});
   const cy=fy-H/2;
-  const champG=bd&&bd[rounds.length-1]&&bd[rounds.length-1].games[0]?bd[rounds.length-1].games[0]:null;
-  const champ=champG&&champG.t1&&champG.t1!=='TBD'?champG.t1:'TBD — Champion';
   s+=`<g class="bkchamp"><rect class="bkbox" x="${champX}" y="${cy}" width="${W}" height="${H}" rx="9"/>`;
-  s+=`<text class="bkslot" x="${champX+12}" y="${cy+H/2+5}">${esc(champ)}</text></g>`;
+  s+=`<text class="bkslot" x="${champX+12}" y="${cy+H/2+5}">TBD — Champion</text></g>`;
   s+=`</svg>`;host.innerHTML=s;}
+
 
 function buildGroupPlaySection(){
   const block=document.getElementById('gplay-block'),host=document.getElementById('gplay');
@@ -1399,11 +1385,9 @@ async function fetchBracketData(){
   if(!ACTIVE||BRACKET_LOADING)return;
   BRACKET_LOADING=true;
   try{
-    if(ACTIVE.bracketPubUrl){const r=await fetch(ACTIVE.bracketPubUrl,{cache:'no-store'});if(r.ok){const t=await r.text();if(!t.trim().startsWith('<!'))BRACKET_DATA=parseBracketCSV(t,ACTIVE.bracketColOffset||0);}}
     if(ACTIVE.groupPlayPubUrl){const r=await fetch(ACTIVE.groupPlayPubUrl,{cache:'no-store'});if(r.ok){const t=await r.text();if(!t.trim().startsWith('<!'))GPLAY_DATA=parseTKWGroupPlay(t);}}
   }catch(e){}
   BRACKET_LOADING=false;
-  if(ACTIVE)buildBracket(ACTIVE.bracketSize);
   buildGroupPlaySection();
 }
 
@@ -1429,7 +1413,7 @@ window.openFieldMap=openFieldMap;
     document.querySelectorAll('.tabpanel').forEach(p=>p.classList.remove('active'));
     this.classList.add('active');this.setAttribute('aria-selected','true');
     const panel=document.getElementById('tab-'+id);if(panel)panel.classList.add('active');
-    if(id==='ko'&&ACTIVE)fetchBracketData();
+    if(id==='ko'&&ACTIVE){buildBracket(ACTIVE.bracketSize);if(ACTIVE.groupPlayPubUrl)fetchBracketData();}
     if(id==='standings'){const h=document.getElementById('qualStandings');if(h&&!h.children.length)buildQualStandings();}
   }));})();
 

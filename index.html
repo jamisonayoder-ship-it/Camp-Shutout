@@ -176,24 +176,16 @@ body{margin:0;color:var(--ink);font-family:var(--body);-webkit-font-smoothing:an
 .konote{max-width:60ch;color:var(--ink-soft);font-size:16px;line-height:1.55;margin:0 0 22px}
 .konote.small{font-size:14px;margin:0 0 14px}
 .bkscroll{overflow-x:auto;padding:6px 0 14px;-webkit-overflow-scrolling:touch}
-.brkt-scroll{overflow-x:auto;padding:0 0 16px}
 .brkt-wrap{display:flex;gap:0;align-items:flex-start;min-width:max-content}
-.brkt-col{display:flex;flex-direction:column;width:184px;flex-shrink:0;border-right:1px solid var(--line)}
-.brkt-col:last-child{border-right:none}
-.brkt-rnd-hdr{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--blue-deep);padding:0 10px 10px;white-space:nowrap}
-.brkt-slot{display:flex;align-items:center;padding:2px 10px;box-sizing:border-box}
 .brkt-card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:7px 10px;width:100%}
-.brkt-fld{font-size:9px;font-family:var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px}
-.brkt-t{font-size:12px;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:1px 0}
-.brkt-t.tbd{color:var(--muted);font-weight:400;font-style:italic}
-.brkt-div{border-top:1px solid var(--line);margin:4px 0}
-.brkt-sc{font-size:11px;font-family:var(--mono);color:var(--blue);font-weight:700;margin-top:3px}
+
 .bksvg{display:block;width:100%;min-width:900px;height:auto}
 .bklbl{fill:var(--ink);font-family:var(--display);font-size:15px;letter-spacing:.04em;text-transform:uppercase}
 .bkbox{fill:#fff;stroke:var(--line);stroke-width:1.5}.bkdiv{stroke:var(--line);stroke-width:1}
 .bkslot{fill:var(--muted);font-family:var(--mono);font-size:12px}
 .bkseed{fill:var(--blue-deep);font-family:var(--mono);font-weight:700;font-size:12px}
 .bkchamp .bkbox{fill:var(--blue-soft);stroke:var(--blue)}.bkchamp .bkslot{fill:var(--ink-on-blue);font-weight:700}
+.bkslot.tbd{fill:var(--muted);font-style:italic}
 .scrollhint{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:2px 0 0}
 .timeline{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--card);box-shadow:var(--shadow-sm)}
 
@@ -660,17 +652,37 @@ function parseSchedule(grid){const out={};const at=(r,c)=>(grid[r]&&grid[r][c]!=
     while(/^\d+$/.test(at(rr,roundCol).trim())){rounds.push({round:+at(rr,roundCol).trim(),field:at(rr,col).trim()});rr++;}
     out[name]={conf,range,rounds};}}}}return out;}
 
-function parseTeams(grid,known){const set=new Set(known);let cc=1,best=-1;
+function parseTeams(grid,known){
+ const set=new Set(known);
+ // Step 1: find team-name column
+ let cc=1,best=-1;
  for(let c=0;c<8;c++){let hit=0;for(const row of grid){if(row[c]&&set.has(String(row[c]).trim()))hit++;}if(hit>best){best=hit;cc=c;}}
- const isName=v=>{const s=String(v||'').trim();return s.length>1&&!/^\d+$/.test(s)&&!['Team','Player','Name','Jersey','#'].includes(s);};
- // Use a map to MERGE players across multiple rows for the same team
- // (handles both "one row per team" and "one row per player" formats)
+ // Step 2: find player-name columns from header row
+ // Header typically has "R1 Name","R2 Name"... or "N1","N2"...
+ let nameCols=[];
+ for(let r=0;r<Math.min(6,grid.length);r++){
+   const row=grid[r]||[];
+   const cands=[];
+   for(let c=0;c<row.length;c++){
+     const h=String(row[c]||'').trim().toLowerCase();
+     if((h.includes('name')&&h.length<=10)||/^n[1-9]$/.test(h)) cands.push(c);
+   }
+   if(cands.length>=3){nameCols=cands;break;}
+ }
+ // Step 3: isName filter — exclude numbers (int or decimal) and very short strings
+ const isName=v=>{const s=String(v||'').trim();return s.length>1&&!/^\d+(\.\d+)?$/.test(s)&&!['Team','Player','Name','Jersey','#','R1','R2','R3','R4','R5'].includes(s)&&!/^(Group|Field|Round)\s/i.test(s);};
+ // Step 4: collect players per team
  const tmap={};
  for(const row of grid){
-  const country=(row[cc]||'').trim();if(!set.has(country))continue;
-  if(!tmap[country])tmap[country]=[];
-  // Collect all name-like values from columns after team name column
-  for(let i=cc+1;i<row.length;i++){const v=String(row[i]||'').trim();if(isName(v)&&!tmap[country].includes(v))tmap[country].push(v);}
+   const country=(row[cc]||'').trim();if(!set.has(country))continue;
+   if(!tmap[country])tmap[country]=[];
+   if(nameCols.length){
+     // Use specific header-identified columns only (avoids picking up team avgs, other group cols)
+     for(const ci of nameCols){const v=String(row[ci]||'').trim();if(isName(v)&&!tmap[country].includes(v))tmap[country].push(v);}
+   }else{
+     // Fallback: take up to 8 name-like values right after team name col
+     for(let i=cc+1;i<row.length&&tmap[country].length<8;i++){const v=String(row[i]||'').trim();if(isName(v)&&!tmap[country].includes(v))tmap[country].push(v);}
+   }
  }
  return Object.entries(tmap).map(([country,players])=>({country,players}));}
 
@@ -1299,23 +1311,62 @@ function parseTKWGroupPlay(csv){
   return groups;
 }
 
-function buildBracket(){
-  const host=document.getElementById('bracket');if(!host)return;
-  const hint=document.getElementById('brktHint');
-  if(!BRACKET_DATA||!BRACKET_DATA.rounds){host.innerHTML='<div class="ko-empty" style="padding:24px">Bracket loads when playoff sheet is connected.</div>';if(hint)hint.style.display='none';return;}
-  const rounds=BRACKET_DATA.rounds;
-  const slotH=52;
-  host.innerHTML=rounds.map((rnd,ri)=>{
-    const gpSlot=Math.pow(2,ri),slotPx=slotH*gpSlot;
-    const cards=rnd.games.map(g=>{
-      const fld=g.field?`<div class="brkt-fld">${esc(g.field)}</div>`:'';
-      const sc=g.score?`<div class="brkt-sc">${esc(g.score)}</div>`:'';
-      return `<div class="brkt-slot" style="height:${slotPx}px"><div class="brkt-card">${fld}<div class="brkt-t${g.t1?'':' tbd'}">${esc(g.t1||'TBD')}</div><div class="brkt-div"></div><div class="brkt-t${g.t2?'':' tbd'}">${esc(g.t2||'TBD')}</div>${sc}</div></div>`;
-    }).join('');
-    return `<div class="brkt-col"><div class="brkt-rnd-hdr">${esc(rnd.name)}</div>${cards}</div>`;
-  }).join('');
-  if(hint)hint.style.display='block';
-}
+function buildBracket(size){
+  const host=document.getElementById('bracket');if(!host||!ACTIVE)return;
+  if(!size)size=ACTIVE.bracketSize||32;
+  const bd=BRACKET_DATA&&BRACKET_DATA.rounds?BRACKET_DATA.rounds:null;
+  const getG=(r,i)=>bd&&bd[r]&&bd[r].games[i]?bd[r].games[i]:{field:'',t1:'',t2:'',score:''};
+  const fldTxt=f=>(f||'').replace(/\n/g,' ').replace(/\s+G\d+$/i,'').trim();
+  const rounds=size===32
+    ?[{n:'Round of 32',c:16},{n:'Round of 16',c:8},{n:'Quarterfinals',c:4},{n:'Semifinals',c:2},{n:'Final',c:1}]
+    :[{n:'Round of 16',c:8},{n:'Quarterfinals',c:4},{n:'Semifinals',c:2},{n:'Final',c:1}];
+  const W=172,H=72,colGap=58,vGap=10,padT=44,padL=14;
+  const pitch0=H+vGap;const cen=[];
+  rounds.forEach((rd,r)=>{cen[r]=[];for(let i=0;i<rd.c;i++){
+    cen[r][i]=r===0?padT+i*pitch0+H/2:(cen[r-1][2*i]+cen[r-1][2*i+1])/2;}});
+  const colX=r=>padL+r*(W+colGap);
+  const champX=colX(rounds.length-1)+W+colGap;
+  const totalH=padT+rounds[0].c*pitch0+6;
+  const totalW=champX+W+padL;
+  let s=`<svg class="bksvg" viewBox="0 0 ${totalW} ${totalH}" role="img" aria-label="${size}-team knockout bracket">`;
+  for(let r=1;r<rounds.length;r++){for(let i=0;i<rounds[r].c;i++){
+    const x0=colX(r-1)+W,x1=colX(r),midX=(x0+x1)/2;
+    const yT=cen[r-1][2*i],yB=cen[r-1][2*i+1],yM=cen[r][i];
+    s+=`<path class="bkdiv" d="M${x0} ${yT} H${midX} V${yB} H${x0} M${midX} ${yM} H${x1}" fill="none"/>`;}
+  }
+  const fy=cen[rounds.length-1][0];
+  s+=`<path class="bkdiv" d="M${colX(rounds.length-1)+W} ${fy} H${champX}" fill="none"/>`;
+  rounds.forEach((rd,r)=>{s+=`<text class="bklbl" x="${colX(r)}" y="24">${rd.n}</text>`;});
+  s+=`<text class="bklbl" x="${champX}" y="24">Champion</text>`;
+  const showSeeds=size===32;let seed=1;
+  rounds.forEach((rd,r)=>{for(let i=0;i<rd.c;i++){
+    const x=colX(r),y=cen[r][i]-H/2;
+    const g=getG(r,i);
+    const fld=fldTxt(g.field),t1=g.t1||'TBD',t2=g.t2||'TBD',score=g.score||'';
+    s+=`<rect class="bkbox" x="${x}" y="${y}" width="${W}" height="${H}" rx="9"/>`;
+    const hasF=!!fld;
+    if(hasF){s+=`<text class="bkfld" x="${x+10}" y="${y+13}">${esc(fld)}</text>`;s+=`<line class="bkdiv" x1="${x}" y1="${y+18}" x2="${x+W}" y2="${y+18}"/>`;}
+    const rem=hasF?H-18:H;
+    const yT1=y+(hasF?18:0)+rem*0.33;
+    const yMid=y+(hasF?18:0)+rem*0.52;
+    const yT2=y+(hasF?18:0)+rem*0.75;
+    if(showSeeds&&r===0){
+      s+=`<text class="bkseed" x="${x+11}" y="${yT1}">${seed}</text><text class="bkslot${t1==='TBD'?' tbd':''}" x="${x+30}" y="${yT1}">${esc(t1)}</text>`;
+      s+=`<line class="bkdiv" x1="${x}" y1="${yMid}" x2="${x+W}" y2="${yMid}"/>`;
+      s+=`<text class="bkseed" x="${x+11}" y="${yT2}">${seed+1}</text><text class="bkslot${t2==='TBD'?' tbd':''}" x="${x+30}" y="${yT2}">${esc(t2)}</text>`;
+      seed+=2;
+    }else{
+      s+=`<text class="bkslot${t1==='TBD'?' tbd':''}" x="${x+12}" y="${yT1}">${esc(t1)}</text>`;
+      s+=`<line class="bkdiv" x1="${x}" y1="${yMid}" x2="${x+W}" y2="${yMid}"/>`;
+      s+=`<text class="bkslot${t2==='TBD'?' tbd':''}" x="${x+12}" y="${yT2}">${esc(t2)}</text>`;}
+    if(score)s+=`<text class="bkscr" x="${x+W/2}" y="${y+H-4}">${esc(score)}</text>`;
+  }});
+  const cy=fy-H/2;
+  const champG=bd&&bd[rounds.length-1]&&bd[rounds.length-1].games[0]?bd[rounds.length-1].games[0]:null;
+  const champ=champG&&champG.t1&&champG.t1!=='TBD'?champG.t1:'TBD — Champion';
+  s+=`<g class="bkchamp"><rect class="bkbox" x="${champX}" y="${cy}" width="${W}" height="${H}" rx="9"/>`;
+  s+=`<text class="bkslot" x="${champX+12}" y="${cy+H/2+5}">${esc(champ)}</text></g>`;
+  s+=`</svg>`;host.innerHTML=s;}
 
 function buildGroupPlaySection(){
   const block=document.getElementById('gplay-block'),host=document.getElementById('gplay');
@@ -1333,7 +1384,8 @@ async function fetchBracketData(){
     if(ACTIVE.groupPlayPubUrl){const r=await fetch(ACTIVE.groupPlayPubUrl,{cache:'no-store'});if(r.ok){const t=await r.text();if(!t.trim().startsWith('<!'))GPLAY_DATA=parseTKWGroupPlay(t);}}
   }catch(e){}
   BRACKET_LOADING=false;
-  buildBracket();buildGroupPlaySection();
+  if(ACTIVE)buildBracket(ACTIVE.bracketSize);
+  buildGroupPlaySection();
 }
 
 

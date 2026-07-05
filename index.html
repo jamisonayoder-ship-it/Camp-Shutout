@@ -461,12 +461,6 @@ footer{margin-top:60px;border-top:1px solid var(--line);background:#fff}
     <p class="eyebrow">Knockout Stage · How the title is decided</p>
     <h2>The Road to the Title</h2>
     <p class="konote" id="koNote"></p>
-    <div id="koPreBreak" class="block" style="display:none">
-      <div class="ko-empty" style="padding:32px 20px;text-align:center">
-        <div style="font-size:15px;font-weight:700;color:var(--ink);margin-bottom:6px">Group Play &amp; the Knockout Bracket are coming up</div>
-        <div style="font-size:13px;color:var(--muted)">After the qualifier rounds, teams are reranked into new round-robin groups. Check back here after the break to see your new group, the schedule, and the bracket.</div>
-      </div>
-    </div>
     <div id="koLive">
     <div class="block"><h3>Group Play · Standings</h3>
       <p class="konote small">Each team's new group after the qualifier break. Positions update live from the sheet.</p>
@@ -528,7 +522,6 @@ const COMPETITIONS={
     rosterTab:'Team Generator',schedTab:'Team Schedule',minSchedule:10,bracketPubUrl:'https://docs.google.com/spreadsheets/d/e/2PACX-1vR0NH8EgY33gw3H8N4m7_Y-R6qN13XImLiVBWI_Zvu9SW4FekLVgaUqak1KJbh4_sDYke9wW-nkxUqM/pub?gid=1776573154&single=true&output=csv',bracketColOffset:12,groupPlayPubUrl:'https://docs.google.com/spreadsheets/d/e/2PACX-1vR0NH8EgY33gw3H8N4m7_Y-R6qN13XImLiVBWI_Zvu9SW4FekLVgaUqak1KJbh4_sDYke9wW-nkxUqM/pub?gid=1050495143&single=true&output=csv',
     rosterPubUrl:'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ98bPV7TYvvdj1wWCWsqbPxGet7BEzq57EPwG8Jqm2CzuCSnL4yD1PNhSsp4QSySsIKSarGiWpYXUt/pub?gid=2089924649&single=true&output=csv',
     schedPubUrl:'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ98bPV7TYvvdj1wWCWsqbPxGet7BEzq57EPwG8Jqm2CzuCSnL4yD1PNhSsp4QSySsIKSarGiWpYXUt/pub?gid=620452336&single=true&output=csv',
-    groupPlayGate:true,
     groupNames:['AFC','CAF Group 1','CAF Group 2','CONCACAF Group 1','CONCACAF Group 2','CONMEBOL','OFC','UEFA Group 1','UEFA Group 2'],
     groupScoreUrls:['https://docs.google.com/spreadsheets/d/e/2PACX-1vQTypEIn7iJgXrO82p2he3bqAVBXiDH9IUOLmAX--ri0zTeGaOtW2tqOEyvS__HRTojJhWqLJ41fBxC/pub?output=csv','https://docs.google.com/spreadsheets/d/e/2PACX-1vTq3u1FnS-4sWs0xkUEpoNL9lc1IoxWvdB1_Lk0BwEbBBPtFCVqoqLXQQZf5AhdRQB-T6gaeuOoGi7g/pub?output=csv','https://docs.google.com/spreadsheets/d/e/2PACX-1vRfgIwAF14mHU79EsCyBeayREpNYabPUnl1q7cz-ksCwpd0_bMy0ILusbQvUbyvj3uGf3Z_kT7-DCv9/pub?output=csv','https://docs.google.com/spreadsheets/d/e/2PACX-1vSo4jxk5oO_A4MbF7jOdyqV-INfhFFIb9-H2C7JeCDqLr49_xa61nkFrMnVR4TwXwH-0Sgg4xcJv808/pub?output=csv','https://docs.google.com/spreadsheets/d/e/2PACX-1vR_SKIQib67HGkxluQCIkuSQm5booriZi2nAy7QukAVefVhxv49_wKeDzh5KkgaZr99L2HrSMeBJ5Q_/pub?output=csv','https://docs.google.com/spreadsheets/d/e/2PACX-1vRxqg1ZuAV19SMg8erLVYID5E-5KOmsUTcYh12tFsfCgUGDfS2c6kC0YB0oPsstKDv1fj0Wgn4NStBR/pub?output=csv','https://docs.google.com/spreadsheets/d/e/2PACX-1vTFwqzfCvu_zjLWYN3xn591zfYdl0sdtljgSixgL8aDiPTLFcwiqxzc09dNepqhr6tyG3io_rqG6rhx/pub?output=csv','https://docs.google.com/spreadsheets/d/e/2PACX-1vS4e1gHbOzG6xmPZNulJ3cUbBscMJeSUFBSK6GPCQJVmVbXuvR_S8ksF9NIkI9cGQwrbWxqywlHHs01/pub?output=csv','https://docs.google.com/spreadsheets/d/e/2PACX-1vT2ZOjUDzlL8Gqwlh7Br4LfHQ2QfdM45pl2RNI76XEFFsGHUmwRFpGe6kdUfwmvkG8RWMCS9Rs1AOB4/pub?output=csv'],
     groupScoreTab:'TKW',
@@ -1359,7 +1352,7 @@ let BRACKET_DATA=null,BRACKET_LOADING=false,GP_STANDINGS=null,GP_SCHEDULE=null;
 
 function parseBracketCSV(csv,O){
   O=O||0;
-  const rows=csv.split('\n').map(l=>parseCSV(l));
+  const rows=parseCSV(csv);
   let hi=rows.findIndex(r=>r.some(c=>/round of 32/i.test(String(c||''))||/round of 16/i.test(String(c||''))));
   if(hi<0)return null;
   const hasR32=rows[hi].some(c=>/round of 32/i.test(String(c||'')));
@@ -1396,7 +1389,7 @@ function parseBracketCSV(csv,O){
      header row with group letters (A..J), then rows "1","2","3" listing
      the ranked team per group. Groups run in bands of 10 columns. */
 function parseGPStandings(csv){
-  const rows=csv.split('\n').map(l=>parseCSV(l));
+  const rows=parseCSV(csv);
   const cl=v=>String(v||'').replace(/\n/g,' ').trim();
   // Build a field label map keyed by COLUMN position, band by band, from the
   // "Group Play Bracket" header rows (e.g. "A (Field 1)", "J Field 10)").
@@ -1439,7 +1432,7 @@ function parseGPStandings(csv){
      [GroupName, ROUND, Home, Score, Score, Away, spacer]
    A "Field N" label sits one row above each group header. */
 function parseGPSchedule(csv){
-  const rows=csv.split('\n').map(l=>parseCSV(l));
+  const rows=parseCSV(csv);
   const cl=v=>String(v||'').replace(/\n/g,' ').trim();
   const groups=[];
   for(let r=0;r<rows.length;r++){
@@ -1572,39 +1565,15 @@ function buildGPSchedule(){
 async function fetchBracketData(){
   if(!ACTIVE||BRACKET_LOADING)return;
   BRACKET_LOADING=true;
-  let gpLive=false;
   try{
-    if(ACTIVE.bracketPubUrl){const r=await fetch(ACTIVE.bracketPubUrl,{cache:'no-store'});if(r.ok){const t=await r.text();if(!t.trim().startsWith('<!')){BRACKET_DATA=parseBracketCSV(t,ACTIVE.bracketColOffset||0);GP_STANDINGS=parseGPStandings(t);gpLive=detectGPLive(t);}}}
+    if(ACTIVE.bracketPubUrl){const r=await fetch(ACTIVE.bracketPubUrl,{cache:'no-store'});if(r.ok){const t=await r.text();if(!t.trim().startsWith('<!')){BRACKET_DATA=parseBracketCSV(t,ACTIVE.bracketColOffset||0);GP_STANDINGS=parseGPStandings(t);}}}
     if(ACTIVE.groupPlayPubUrl){const r=await fetch(ACTIVE.groupPlayPubUrl,{cache:'no-store'});if(r.ok){const t=await r.text();if(!t.trim().startsWith('<!'))GP_SCHEDULE=parseGPSchedule(t);}}
   }catch(e){}
   BRACKET_LOADING=false;
-  // Group-play gate: only TKW uses it. Other comps always show their bracket.
-  const gated=!!ACTIVE.groupPlayGate;
-  const show=gated?gpLive:true;
-  const pre=document.getElementById('koPreBreak'),live=document.getElementById('koLive');
-  if(pre&&live){pre.style.display=(gated&&!show)?'':'none';live.style.display=show?'':'none';}
-  if(show){if(ACTIVE)buildBracket(ACTIVE.bracketSize);buildGPStandings();buildGPSchedule();}
-}
-
-/* Reads the AC/AD "GROUP PLAY: LIVE" switch from the standings CSV.
-   Returns true only when a cell equals (or contains) "LIVE". */
-function detectGPLive(csv){
-  const rows=csv.split('\n').map(l=>parseCSV(l)[0]||[]);
-  for(let r=0;r<Math.min(rows.length,4);r++){
-    const row=rows[r]||[];
-    for(let c=0;c<row.length;c++){
-      if(/group\s*play/i.test(String(row[c]||''))){
-        // check the same and next few cells for LIVE
-        for(let k=c;k<Math.min(c+3,row.length);k++){
-          if(/\blive\b/i.test(String(row[k]||'')))return true;
-          if(/\b(hidden|hide|off)\b/i.test(String(row[k]||'')))return false;
-        }
-      }
-    }
-    // also directly check AC/AD (cols 28/29)
-    if(/\blive\b/i.test(String(row[29]||''))||/\blive\b/i.test(String(row[28]||'')))return true;
-  }
-  return false;
+  const live=document.getElementById('koLive');
+  if(live)live.style.display='';
+  if(ACTIVE)buildBracket(ACTIVE.bracketSize);
+  buildGPStandings();buildGPSchedule();
 }
 
 

@@ -176,16 +176,42 @@ body{margin:0;color:var(--ink);font-family:var(--body);-webkit-font-smoothing:an
 .konote{max-width:60ch;color:var(--ink-soft);font-size:16px;line-height:1.55;margin:0 0 22px}
 .konote.small{font-size:14px;margin:0 0 14px}
 .bkscroll{overflow-x:auto;padding:6px 0 14px;-webkit-overflow-scrolling:touch}
+/* ── Group Play standings & schedule cards ── */
+.gp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-top:4px}
+.gp-card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 13px;box-shadow:var(--shadow-sm)}
+.gp-card h4{margin:0 0 9px;font-family:var(--display);font-size:14px;letter-spacing:.03em;color:var(--blue-deep);text-transform:uppercase;display:flex;align-items:center;justify-content:space-between}
+.gp-fld{font-family:var(--mono);font-size:9px;color:var(--muted);font-weight:600;letter-spacing:.04em}
+.gp-row{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--line)}
+.gp-row:last-child{border-bottom:none}
+.gp-pos{font-family:var(--mono);font-size:11px;font-weight:700;color:var(--muted);min-width:14px}
+.gp-row .fb{width:22px;height:16px;flex:none}
+.gp-nm{font-size:12.5px;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gp-row.tbd .gp-nm{color:var(--muted);font-style:italic;font-weight:400}
+.gp-row.p1{background:linear-gradient(90deg,var(--blue-tint),transparent);margin:0 -13px;padding-left:13px;padding-right:13px;border-radius:6px}
+/* schedule */
+.gs-card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 13px;box-shadow:var(--shadow-sm)}
+.gs-card h4{margin:0 0 8px;font-family:var(--display);font-size:14px;letter-spacing:.03em;color:var(--blue-deep);text-transform:uppercase;display:flex;align-items:center;justify-content:space-between}
+.gs-m{display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid var(--line);font-size:12px}
+.gs-m:last-child{border-bottom:none}
+.gs-rnd{font-family:var(--mono);font-size:10px;color:var(--muted);min-width:16px;font-weight:600}
+.gs-side{display:flex;align-items:center;gap:5px;flex:1;min-width:0}
+.gs-side.away{flex-direction:row-reverse;text-align:right}
+.gs-side .fb{width:20px;height:15px;flex:none}
+.gs-side .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600}
+.gs-sc{font-family:var(--mono);font-size:11px;font-weight:700;color:var(--blue);min-width:34px;text-align:center}
+.gs-sc.vs{color:var(--muted);font-weight:400}
 .brkt-wrap{display:flex;gap:0;align-items:flex-start;min-width:max-content}
 .brkt-card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:7px 10px;width:100%}
 
 .bksvg{display:block;width:100%;min-width:900px;height:auto}
 .bklbl{fill:var(--ink);font-family:var(--display);font-size:15px;letter-spacing:.04em;text-transform:uppercase}
 .bkbox{fill:#fff;stroke:var(--line);stroke-width:1.5}.bkdiv{stroke:var(--line);stroke-width:1}
-.bkslot{fill:var(--muted);font-family:var(--mono);font-size:12px}
-.bkseed{fill:var(--blue-deep);font-family:var(--mono);font-weight:700;font-size:12px}
+.bkslot{fill:var(--ink);font-family:var(--sans,inherit);font-size:12px;font-weight:600}
+.bkseed{fill:var(--blue-deep);font-family:var(--mono);font-weight:700;font-size:11px}
+.bkfld{fill:var(--muted);font-family:var(--mono);font-size:8.5px;letter-spacing:.05em;text-transform:uppercase}
+.bkscr{fill:var(--blue);font-family:var(--mono);font-size:12px;font-weight:700}
 .bkchamp .bkbox{fill:var(--blue-soft);stroke:var(--blue)}.bkchamp .bkslot{fill:var(--ink-on-blue);font-weight:700}
-.bkslot.tbd{fill:var(--muted);font-style:italic}
+.bkslot.tbd{fill:var(--muted);font-style:italic;font-weight:400}
 .scrollhint{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:2px 0 0}
 .timeline{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--card);box-shadow:var(--shadow-sm)}
 
@@ -435,13 +461,15 @@ footer{margin-top:60px;border-top:1px solid var(--line);background:#fff}
     <p class="eyebrow">Knockout Stage · How the title is decided</p>
     <h2>The Road to the Title</h2>
     <p class="konote" id="koNote"></p>
-    <div class="block"><h3>Group Stage · live standings</h3>
-      <p class="konote small">Each group is named by a letter. Standings update automatically as scores are entered.</p>
-      <div id="groups" class="groups">
-        <div class="ko-empty">Group standings will appear here once games begin.</div>
-      </div>
+    <div class="block"><h3>Group Play · Standings</h3>
+      <p class="konote small">Each team's new group after the qualifier break. Positions update live from the sheet.</p>
+      <div id="gpStandings"><div class="ko-empty">Group standings will appear here after the break.</div></div>
     </div>
-    <div class="block"><h3>Knockout bracket</h3>
+    <div class="block"><h3>Group Play · Schedule</h3>
+      <p class="konote small">Round-robin fixtures for each group. Scores fill in as games are played.</p>
+      <div id="gpSchedule"><div class="ko-empty">The group schedule will appear here after the break.</div></div>
+    </div>
+    <div class="block"><h3>Knockout Bracket</h3>
       <div class="bkscroll"><div id="bracket"></div></div>
       <p class="scrollhint">↔ Scroll to follow the bracket</p>
     </div>
@@ -1314,11 +1342,11 @@ async function loadGroupData(){
   LAST_UPDATED=new Date();GROUPS_LOADING=false;
   if(btn)btn.classList.remove('spin');
   buildQualStandings();if(lastChoice)renderResult(lastChoice);
-  const _kot=document.getElementById('tab-ko');if(_kot&&_kot.classList.contains('active')&&ACTIVE&&ACTIVE.groupPlayPubUrl)fetchBracketData();}
+  const _kot=document.getElementById('tab-ko');if(_kot&&_kot.classList.contains('active')&&ACTIVE&&(ACTIVE.bracketPubUrl||ACTIVE.groupPlayPubUrl))fetchBracketData();}
 
 /* ============ BRACKET ============ */
 
-let BRACKET_DATA=null,BRACKET_LOADING=false,GPLAY_DATA=null;
+let BRACKET_DATA=null,BRACKET_LOADING=false,GP_STANDINGS=null,GP_SCHEDULE=null;
 
 function parseBracketCSV(csv,O){
   O=O||0;
@@ -1354,32 +1382,98 @@ function parseBracketCSV(csv,O){
   ]};}
 }
 
-function parseTKWGroupPlay(csv){
+/* Parse Group Play STANDINGS from the bracket sheet (gid=1776573154).
+   Layout: a "Group Play Standings" banner, then repeating 4-row bands:
+     header row with group letters (A..J), then rows "1","2","3" listing
+     the ranked team per group. Groups run in bands of 10 columns. */
+function parseGPStandings(csv){
   const rows=csv.split('\n').map(l=>parseCSV(l));
   const cl=v=>String(v||'').replace(/\n/g,' ').trim();
-  let hdr=rows.findIndex(r=>r.some(c=>/^Group [A-Z]$/.test(cl(c))));
-  if(hdr<0)return[];
-  const hdrRow=rows[hdr],groups=[];
-  for(let gc=0;gc<hdrRow.length;gc+=7){
-    const gname=cl(hdrRow[gc]);
-    if(!gname||!/^Group [A-Z]/.test(gname))continue;
-    const fieldRow=hdr>0?rows[hdr-1]:[];
-    const field=fieldRow?cl((fieldRow[gc+2]||'')):'';
-    const matches=[];
-    for(let r=hdr+1;r<rows.length;r++){const row=rows[r]||[];const rnd=cl(row[gc+1]),home=cl(row[gc+2]),away=cl(row[gc+5]),s1=cl(row[gc+3]),s2=cl(row[gc+4]);if(home||away)matches.push({rnd,home,away,s1,s2});}
-    if(matches.length)groups.push({name:gname,field,matches});
+  // Build a field label map keyed by COLUMN position, band by band, from the
+  // "Group Play Bracket" header rows (e.g. "A (Field 1)", "J Field 10)").
+  // These header rows contain "(Field N" for each of the 10 group columns.
+  const fieldByBand=[]; // array of {row, cols:{colIdx:'Field N'}}
+  for(let r=0;r<rows.length;r++){
+    const row=rows[r]||[];const cols={};let hits=0;
+    for(let c=1;c<=10;c++){
+      const m=cl(row[c]).match(/F[Ii]eld\s*(\d+)/);
+      if(m){cols[c]=`Field ${m[1]}`;hits++;}
+    }
+    if(hits>=5)fieldByBand.push({row:r,cols});
+  }
+  const fieldForBandCol=(bandIdx,col)=>{const b=fieldByBand[bandIdx];return b?(b.cols[col]||''):'';};
+  // Find the standings banner
+  let start=rows.findIndex(r=>/group play standings/i.test(cl(r[0])||''));
+  if(start<0)return[];
+  const groups=[];let bandIdx=0;
+  for(let r=start+1;r<rows.length;r++){
+    const row=rows[r]||[];
+    // A header row has group codes in cols 1..10 and blank col 0
+    const codes=[];
+    for(let c=1;c<=10;c++){const v=cl(row[c]);if(v&&/^([A-Z]{1,3}|GROUP \d+)$/.test(v))codes.push([c,v]);}
+    if(codes.length>=3&&!/^\d+$/.test(cl(row[0]))){
+      const posRows=[];
+      for(let k=1;k<=3;k++){const pr=rows[r+k]||[];if(/^\d+$/.test(cl(pr[0])))posRows.push(pr);}
+      for(const [c,code] of codes){
+        const teams=posRows.map(pr=>cl(pr[c]));
+        if(teams.some(t=>t))groups.push({code,field:fieldForBandCol(bandIdx,c),teams});
+      }
+      bandIdx++;
+      r+=posRows.length;
+    }
   }
   return groups;
+}
+
+/* Parse Group Play SCHEDULE (gid=1050495143).
+   Layout: bands of groups, each group = 7 cols
+     [GroupName, ROUND, Home, Score, Score, Away, spacer]
+   A "Field N" label sits one row above each group header. */
+function parseGPSchedule(csv){
+  const rows=csv.split('\n').map(l=>parseCSV(l));
+  const cl=v=>String(v||'').replace(/\n/g,' ').trim();
+  const groups=[];
+  for(let r=0;r<rows.length;r++){
+    const row=rows[r]||[];
+    for(let gc=0;gc<row.length;gc+=7){
+      const gname=cl(row[gc]);
+      if(!/^Group [A-Z0-9]+/i.test(gname))continue;
+      // Confirm it's a header row: next col should be "ROUND"
+      if(!/round/i.test(cl(row[gc+1])))continue;
+      const fieldRow=r>0?rows[r-1]:[];
+      const field=fieldRow?cl(fieldRow[gc+2]):'';
+      const matches=[];
+      for(let rr=r+1;rr<rows.length;rr++){
+        const mr=rows[rr]||[];
+        const rnd=cl(mr[gc+1]);
+        if(!/^\d+$/.test(rnd))break; // group block ended
+        const home=cl(mr[gc+2]),s1=cl(mr[gc+3]),s2=cl(mr[gc+4]),away=cl(mr[gc+5]);
+        if(home||away)matches.push({rnd,home,away,s1,s2});
+      }
+      if(matches.length)groups.push({name:gname,field,matches});
+    }
+  }
+  return groups;
+}
+
+function bkTeam(name){
+  // Returns flag + name for a bracket/standings slot; TBD if blank/TBD.
+  const n=String(name||'').trim();
+  if(!n||/^tbd$/i.test(n))return {tbd:true, html:'TBD'};
+  return {tbd:false, name:n};
 }
 
 function buildBracket(size){
   const host=document.getElementById('bracket');if(!host||!ACTIVE)return;
   if(!size)size=ACTIVE.bracketSize||32;
+  const bd=BRACKET_DATA&&BRACKET_DATA.rounds?BRACKET_DATA.rounds:null;
+  const getG=(r,i)=>bd&&bd[r]&&bd[r].games[i]?bd[r].games[i]:{field:'',t1:'',t2:'',score:''};
+  const fldTxt=f=>String(f||'').replace(/\n/g,' ').split(/[\s\/]+G\d+/i)[0].trim();
   const rounds=size===32
     ?[{n:'Round of 32',c:16},{n:'Round of 16',c:8},{n:'Quarterfinals',c:4},{n:'Semifinals',c:2},{n:'Final',c:1}]
     :[{n:'Round of 16',c:8},{n:'Quarterfinals',c:4},{n:'Semifinals',c:2},{n:'Final',c:1}];
-  const W=150,H=48,colGap=60,vGap=12,padT=44,padL=14;
-  const pitch0=H+vGap;const cen=[];
+  const W=188,H=64,colGap=50,padT=44,padL=14;
+  const pitch0=H+12;const cen=[];
   rounds.forEach((rd,r)=>{cen[r]=[];for(let i=0;i<rd.c;i++){
     cen[r][i]=r===0?padT+i*pitch0+H/2:(cen[r-1][2*i]+cen[r-1][2*i+1])/2;}});
   const colX=r=>padL+r*(W+colGap);
@@ -1396,41 +1490,86 @@ function buildBracket(size){
   s+=`<path class="bkdiv" d="M${colX(rounds.length-1)+W} ${fy} H${champX}" fill="none"/>`;
   rounds.forEach((rd,r)=>{s+=`<text class="bklbl" x="${colX(r)}" y="24">${rd.n}</text>`;});
   s+=`<text class="bklbl" x="${champX}" y="24">Champion</text>`;
+  const line=(x,y,w,nameRaw,scoreRaw,isR32,seedNum)=>{
+    const t=bkTeam(nameRaw);const score=String(scoreRaw||'').trim();
+    const px=isR32?24:10;let out='';
+    if(isR32)out+=`<text class="bkseed" x="${x+8}" y="${y+4}">${seedNum}</text>`;
+    if(t.tbd){out+=`<text class="bkslot tbd" x="${x+px}" y="${y+4}">TBD</text>`;}
+    else{
+      out+=`<foreignObject x="${x+px}" y="${y-8}" width="20" height="15">${flagBox(t.name,'sm')}</foreignObject>`;
+      out+=`<text class="bkslot" x="${x+px+24}" y="${y+4}">${esc(t.name)}</text>`;
+      if(score)out+=`<text class="bkscr" x="${x+w-10}" y="${y+4}" text-anchor="end">${esc(score)}</text>`;
+    }
+    return out;
+  };
   let seed=1;
   rounds.forEach((rd,r)=>{for(let i=0;i<rd.c;i++){
-    const x=colX(r),y=cen[r][i]-H/2;
+    const x=colX(r),y=cen[r][i]-H/2;const g=getG(r,i);
+    const fld=fldTxt(g.field);
     s+=`<rect class="bkbox" x="${x}" y="${y}" width="${W}" height="${H}" rx="9"/>`;
-    s+=`<line class="bkdiv" x1="${x}" y1="${y+H/2}" x2="${x+W}" y2="${y+H/2}"/>`;
-    if(r===0){
-      s+=`<text class="bkseed" x="${x+11}" y="${y+H/4+4}">${seed}</text><text class="bkslot" x="${x+30}" y="${y+H/4+4}">TBD</text>`;
-      s+=`<text class="bkseed" x="${x+11}" y="${y+3*H/4+4}">${seed+1}</text><text class="bkslot" x="${x+30}" y="${y+3*H/4+4}">TBD</text>`;
-      seed+=2;
-    }else{
-      s+=`<text class="bkslot" x="${x+12}" y="${y+H/4+4}">TBD</text>`;
-      s+=`<text class="bkslot" x="${x+12}" y="${y+3*H/4+4}">TBD</text>`;}
+    let topY=y+H/4+3, botY=y+3*H/4+3, midY=y+H/2;
+    if(fld){
+      s+=`<text class="bkfld" x="${x+10}" y="${y+13}">${esc(fld)}</text>`;
+      s+=`<line class="bkdiv" x1="${x}" y1="${y+18}" x2="${x+W}" y2="${y+18}"/>`;
+      const rem=H-18;topY=y+18+rem/4+3; botY=y+18+3*rem/4+3; midY=y+18+rem/2;
+    }
+    const isR32=(r===0);
+    const parts=String(g.score||'').split('-');
+    const s1=(parts[0]||'').trim(),s2=(parts[1]||'').trim();
+    s+=line(x,topY,W,g.t1,s1,isR32,seed);
+    s+=`<line class="bkdiv" x1="${x}" y1="${midY}" x2="${x+W}" y2="${midY}"/>`;
+    s+=line(x,botY,W,g.t2,s2,isR32,seed+1);
+    if(isR32)seed+=2;
   }});
   const cy=fy-H/2;
+  const champG=bd&&bd[rounds.length-1]&&bd[rounds.length-1].games[0]?bd[rounds.length-1].games[0]:null;
+  const champName=champG&&champG.t1&&!/^tbd$/i.test(String(champG.t1).trim())?String(champG.t1).trim():'';
   s+=`<g class="bkchamp"><rect class="bkbox" x="${champX}" y="${cy}" width="${W}" height="${H}" rx="9"/>`;
-  s+=`<text class="bkslot" x="${champX+12}" y="${cy+H/2+5}">TBD — Champion</text></g>`;
-  s+=`</svg>`;host.innerHTML=s;}
+  if(champName){
+    s+=`<foreignObject x="${champX+12}" y="${cy+H/2-8}" width="20" height="15">${flagBox(champName,'sm')}</foreignObject>`;
+    s+=`<text class="bkslot" x="${champX+38}" y="${cy+H/2+5}">${esc(champName)}</text>`;
+  }else{s+=`<text class="bkslot tbd" x="${champX+12}" y="${cy+H/2+5}">TBD — Champion</text>`;}
+  s+=`</g></svg>`;host.innerHTML=s;}
 
+function buildGPStandings(){
+  const host=document.getElementById('gpStandings');if(!host)return;
+  if(!GP_STANDINGS||!GP_STANDINGS.length){host.innerHTML='<div class="ko-empty">Group standings will appear here after the break.</div>';return;}
+  host.innerHTML=`<div class="gp-grid">${GP_STANDINGS.map(g=>{
+    const rows=g.teams.map((tm,i)=>{
+      const t=bkTeam(tm);
+      const flag=t.tbd?'':flagBox(t.name,'sm');
+      return `<div class="gp-row${t.tbd?' tbd':''}${i===0?' p1':''}"><span class="gp-pos">${i+1}</span>${flag}<span class="gp-nm">${t.tbd?'TBD':esc(t.name)}</span></div>`;
+    }).join('');
+    return `<div class="gp-card"><h4><span>Group ${esc(g.code)}</span>${g.field?`<span class="gp-fld">${esc(g.field)}</span>`:''}</h4>${rows}</div>`;
+  }).join('')}</div>`;
+}
 
-function buildGroupPlaySection(){
-  const block=document.getElementById('gplay-block'),host=document.getElementById('gplay');
-  if(!block||!host)return;
-  if(!GPLAY_DATA||!GPLAY_DATA.length){block.style.display='none';return;}
-  block.style.display='';
-  host.innerHTML=`<div class="gplay-wrap">${GPLAY_DATA.map(g=>`<div class="gplay-group"><div class="gplay-hdr">${esc(g.name)}</div>${g.field?`<div class="gplay-fld">${esc(g.field)}</div>`:''}<div>${g.matches.map(m=>{const sc=(m.s1||m.s2)?`<span class="gplay-sc">${esc(m.s1||'-')}:${esc(m.s2||'-')}</span>`:`<span class="gplay-sc">vs</span>`;return`<div class="gplay-match"><span class="gplay-rnd">R${esc(m.rnd)}</span><span class="gplay-team">${esc(m.home)}</span>${sc}<span class="gplay-team" style="text-align:right">${esc(m.away)}</span></div>`;}).join('')}</div></div>`).join('')}</div>`;
+function buildGPSchedule(){
+  const host=document.getElementById('gpSchedule');if(!host)return;
+  if(!GP_SCHEDULE||!GP_SCHEDULE.length){host.innerHTML='<div class="ko-empty">The group schedule will appear here after the break.</div>';return;}
+  host.innerHTML=`<div class="gp-grid">${GP_SCHEDULE.map(g=>{
+    const ms=g.matches.map(m=>{
+      const h=bkTeam(m.home),a=bkTeam(m.away);
+      const played=(m.s1!==''||m.s2!=='')&&m.s1!=null&&m.s2!=null&&(m.s1!==''||m.s2!=='');
+      const hasScore=(String(m.s1).trim()!==''||String(m.s2).trim()!=='');
+      const sc=hasScore?`<span class="gs-sc">${esc(m.s1||'0')}–${esc(m.s2||'0')}</span>`:`<span class="gs-sc vs">vs</span>`;
+      const hf=h.tbd?'':flagBox(h.name,'sm'),af=a.tbd?'':flagBox(a.name,'sm');
+      return `<div class="gs-m"><span class="gs-rnd">${esc(m.rnd)}</span><span class="gs-side">${hf}<span class="nm">${h.tbd?'TBD':esc(h.name)}</span></span>${sc}<span class="gs-side away">${af}<span class="nm">${a.tbd?'TBD':esc(a.name)}</span></span></div>`;
+    }).join('');
+    return `<div class="gs-card"><h4><span>${esc(g.name)}</span>${g.field?`<span class="gp-fld">${esc(g.field)}</span>`:''}</h4>${ms}</div>`;
+  }).join('')}</div>`;
 }
 
 async function fetchBracketData(){
   if(!ACTIVE||BRACKET_LOADING)return;
   BRACKET_LOADING=true;
   try{
-    if(ACTIVE.groupPlayPubUrl){const r=await fetch(ACTIVE.groupPlayPubUrl,{cache:'no-store'});if(r.ok){const t=await r.text();if(!t.trim().startsWith('<!'))GPLAY_DATA=parseTKWGroupPlay(t);}}
+    if(ACTIVE.bracketPubUrl){const r=await fetch(ACTIVE.bracketPubUrl,{cache:'no-store'});if(r.ok){const t=await r.text();if(!t.trim().startsWith('<!')){BRACKET_DATA=parseBracketCSV(t,ACTIVE.bracketColOffset||0);GP_STANDINGS=parseGPStandings(t);}}}
+    if(ACTIVE.groupPlayPubUrl){const r=await fetch(ACTIVE.groupPlayPubUrl,{cache:'no-store'});if(r.ok){const t=await r.text();if(!t.trim().startsWith('<!'))GP_SCHEDULE=parseGPSchedule(t);}}
   }catch(e){}
   BRACKET_LOADING=false;
-  buildGroupPlaySection();
+  if(ACTIVE)buildBracket(ACTIVE.bracketSize);
+  buildGPStandings();buildGPSchedule();
 }
 
 
@@ -1455,7 +1594,7 @@ window.openFieldMap=openFieldMap;
     document.querySelectorAll('.tabpanel').forEach(p=>p.classList.remove('active'));
     this.classList.add('active');this.setAttribute('aria-selected','true');
     const panel=document.getElementById('tab-'+id);if(panel)panel.classList.add('active');
-    if(id==='ko'&&ACTIVE){buildBracket(ACTIVE.bracketSize);if(ACTIVE.groupPlayPubUrl)fetchBracketData();}
+    if(id==='ko'&&ACTIVE){buildBracket(ACTIVE.bracketSize);if(ACTIVE.bracketPubUrl||ACTIVE.groupPlayPubUrl)fetchBracketData();}
     if(id==='standings'){const h=document.getElementById('qualStandings');if(h&&!h.children.length)buildQualStandings();}
   }));})();
 
@@ -1494,7 +1633,7 @@ function selectComp(id){
   GROUPS_LOADING=false;lastChoice=null;
   if(GROUPS_TIMER){clearInterval(GROUPS_TIMER);GROUPS_TIMER=null;}
   // seed TKW snapshot
-  BRACKET_DATA=null;GPLAY_DATA=null;
+  BRACKET_DATA=null;GP_STANDINGS=null;GP_SCHEDULE=null;
   if(id==='tkw'){
     Object.assign(QUAL_STANDINGS,TKW_SEED_STANDINGS);
     TKW_SEED_SCORES.forEach(([rd,h,hs,as,a])=>{

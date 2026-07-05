@@ -655,37 +655,43 @@ function parseSchedule(grid){const out={};const at=(r,c)=>(grid[r]&&grid[r][c]!=
 
 function parseTeams(grid,known){
  const set=new Set(known);
- // Step 1: find team-name column
- let cc=1,best=-1;
- for(let c=0;c<8;c++){let hit=0;for(const row of grid){if(row[c]&&set.has(String(row[c]).trim()))hit++;}if(hit>best){best=hit;cc=c;}}
- // Step 2: find player-name columns from header row
- // Header typically has "R1 Name","R2 Name"... or "N1","N2"...
- let nameCols=[];
- for(let r=0;r<Math.min(6,grid.length);r++){
+ // Step 1: find player-name columns from header row FIRST
+ // Header has "R1 Name","R2 Name"..."R6 name" — match anything containing "name"
+ let nameCols=[],hdrRow=-1;
+ for(let r=0;r<Math.min(8,grid.length);r++){
    const row=grid[r]||[];
    const cands=[];
    for(let c=0;c<row.length;c++){
      const h=String(row[c]||'').trim().toLowerCase();
      if((h.includes('name')&&h.length<=10)||/^n[1-9]$/.test(h)) cands.push(c);
    }
-   if(cands.length>=3){nameCols=cands;break;}
+   if(cands.length>=3){nameCols=cands;hdrRow=r;break;}
  }
- // Step 3: isName filter — exclude numbers (int or decimal) and very short strings
- const isName=v=>{const s=String(v||'').trim();return s.length>1&&!/^\d+(\.\d+)?$/.test(s)&&!['Team','Player','Name','Jersey','#','R1','R2','R3','R4','R5'].includes(s)&&!/^(Group|Field|Round)\s/i.test(s);};
- // Step 4: collect players per team
- const tmap={};
- for(const row of grid){
-   const country=(row[cc]||'').trim();if(!set.has(country))continue;
-   if(!tmap[country])tmap[country]=[];
+ // Step 2: find team-name column.
+ // Prefer the column that most often holds a known schedule team; otherwise
+ // fall back to the column just before the first name column (usually col 1).
+ let cc=1,best=-1;
+ for(let c=0;c<8;c++){let hit=0;for(const row of grid){if(row[c]&&set.has(String(row[c]).trim()))hit++;}if(hit>best){best=hit;cc=c;}}
+ if(best<=0&&nameCols.length){cc=Math.max(0,nameCols[0]-1);}
+ // Step 3: isName filter — exclude numbers, short strings, and structural labels
+ const isName=v=>{const s=String(v||'').trim();return s.length>1&&!/^\d+(\.\d+)?$/.test(s)&&!['Team','Player','Name','Jersey','#','R1','R2','R3','R4','R5','R6'].includes(s)&&!/^(Group|Field|Round)\b/i.test(s);};
+ // A valid team name: non-empty, not a pure number, not a structural label
+ const isTeam=v=>{const s=String(v||'').trim();return s.length>1&&!/^\d+(\.\d+)?$/.test(s)&&!/^(Group|Field|Round|Team|R[1-6]|N[1-6])\b/i.test(s)&&!/^(AFC|CAF|CONCACAF|CONMEBOL|OFC|UEFA)\b/i.test(s);};
+ // Step 4: collect players per team — register ALL teams, not just scheduled ones
+ const tmap={};const order=[];
+ for(let r=0;r<grid.length;r++){
+   if(r===hdrRow)continue;
+   const row=grid[r]||[];
+   const country=String(row[cc]||'').trim();
+   if(!isTeam(country))continue;
+   if(!tmap[country]){tmap[country]=[];order.push(country);}
    if(nameCols.length){
-     // Use specific header-identified columns only (avoids picking up team avgs, other group cols)
      for(const ci of nameCols){const v=String(row[ci]||'').trim();if(isName(v)&&!tmap[country].includes(v))tmap[country].push(v);}
    }else{
-     // Fallback: take up to 8 name-like values right after team name col
      for(let i=cc+1;i<row.length&&tmap[country].length<8;i++){const v=String(row[i]||'').trim();if(isName(v)&&!tmap[country].includes(v))tmap[country].push(v);}
    }
  }
- return Object.entries(tmap).map(([country,players])=>({country,players}));}
+ return order.map(country=>({country,players:tmap[country]}));}
 
 function computeOpponents(schedule){
   const OPP={};const byConf={};

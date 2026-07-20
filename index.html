@@ -1165,14 +1165,15 @@ function renderResult(it){if(!it)return;
   const youName=it.type==='player'?it.label:null;
   const roster=(team?team.players:[]).map(p=>`<span class="chip${p===youName?' you':''}">${esc(p)}</span>`).join('')||'<span class="chip">Roster not posted yet</span>';
   const np=team&&team.players?team.players.length:0;
-  const tiles=sched?sched.rounds.map(x=>fieldTile(country,x)).join(''):'';
+  const hasRounds=!!(sched&&sched.rounds&&sched.rounds.length);
+  const tiles=hasRounds?sched.rounds.map(x=>fieldTile(country,x)).join(''):'';
   resultEl.innerHTML=`
     <div class="teamhead">${teamBadge(country,'lg')}
       <div class="id"><div class="lbl">${it.type==='player'?'You play for':'Team'}</div><div class="country">${esc(country)}</div></div>
       <div class="conf">${confShort?`<span class="badge2">${esc(confShort)}</span>`:''}${confFull?`<div class="full">${esc(confFull)}</div>`:''}${fields?`<div class="fields">${esc(fields)}</div>`:''}</div>
     </div>
     <div class="block"><h3>${np>1?'Squad':'Keeper'}</h3><div class="roster">${roster}</div></div>
-    ${sched?`<div class="block"><h3>Schedule · result, opponent &amp; field by round</h3><div class="sched">${tiles}</div></div>`:''}`;
+    ${hasRounds?`<div class="block"><h3>Schedule · result, opponent &amp; field by round</h3><div class="sched">${tiles}</div></div>`:''}`;
   resultEl.classList.add('show');}
 
 /* ============ LOAD / STATUS ============ */
@@ -1318,8 +1319,18 @@ async function loadGroupData(){
         if(namedConf){
           grid.forEach(row=>{
             const num=String(row[0]||'').trim(),team=String(row[1]||'').trim();
-            if(/^\d+$/.test(num)&&team&&team.toLowerCase()!=='team')
-              SCHEDULE[team]={conf:namedConf,field:'',games:[],grp:namedConf};
+            if(!/^\d+$/.test(num)||!team||team.toLowerCase()==='team')return;
+            // MERGE — never clobber rounds/range already parsed from the
+            // Team Schedules tab, or the team loses its schedule display.
+            const prev=SCHEDULE[team]||{};
+            SCHEDULE[team]={
+              conf:namedConf,
+              grp:namedConf,
+              field:prev.field||'',
+              range:prev.range||'',
+              rounds:prev.rounds||[],
+              games:prev.games||[]
+            };
           });
         }
         _write(grid,namedConf);}catch(e){}

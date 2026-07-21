@@ -560,7 +560,7 @@ const COMPETITIONS={
     id:'college',name:"Stan's Game",subtitle:'College Cup',
     tagline:'100 teams · 10 groups · 32-team knockout · one champion',showTicker:false,
     sheetId:'1EURcHF3OZZiA4BvjVk-7qQkvJB6740CgmzXEwmUxweE',
-    rosterTab:'Teams',schedTab:'Team Schedules',rosterPubUrl:'https://docs.google.com/spreadsheets/d/e/2PACX-1vSYA10s9r4kYpRkZjJIfbNvHkXFUdR7R4G3skVpMrrMeVaInpUs6rtq7Dw38I-fvTcQvLQVCwwIsMWM/pub?gid=422272405&single=true&output=csv',minSchedule:5,bracketPubUrl:'https://docs.google.com/spreadsheets/d/e/2PACX-1vSYA10s9r4kYpRkZjJIfbNvHkXFUdR7R4G3skVpMrrMeVaInpUs6rtq7Dw38I-fvTcQvLQVCwwIsMWM/pub?gid=1775683329&single=true&output=csv',bracketColOffset:0,
+    rosterTab:'Teams',schedTab:'Team Schedules',schedPubUrl:'https://docs.google.com/spreadsheets/d/e/2PACX-1vSYA10s9r4kYpRkZjJIfbNvHkXFUdR7R4G3skVpMrrMeVaInpUs6rtq7Dw38I-fvTcQvLQVCwwIsMWM/pub?gid=1674664057&single=true&output=csv',rosterPubUrl:'https://docs.google.com/spreadsheets/d/e/2PACX-1vSYA10s9r4kYpRkZjJIfbNvHkXFUdR7R4G3skVpMrrMeVaInpUs6rtq7Dw38I-fvTcQvLQVCwwIsMWM/pub?gid=422272405&single=true&output=csv',minSchedule:5,bracketPubUrl:'https://docs.google.com/spreadsheets/d/e/2PACX-1vSYA10s9r4kYpRkZjJIfbNvHkXFUdR7R4G3skVpMrrMeVaInpUs6rtq7Dw38I-fvTcQvLQVCwwIsMWM/pub?gid=1775683329&single=true&output=csv',bracketColOffset:0,
     groupNames:['Group 1','Group 2','Group 3','Group 4','Group 5','Group 6','Group 7','Group 8','Group 9','Group 10'],
     groupScoreUrls:['https://docs.google.com/spreadsheets/d/e/2PACX-1vTA5WXr59UEivbtZuDzgi5vHPeLmccUSA2Xq-Rfu-j3F_BSbUK9ZLHyq4fB1MS3tHw9HNhqdjyRWlM-/pub?output=csv','https://docs.google.com/spreadsheets/d/e/2PACX-1vQta9r8gyfR34ONG2XkpOI94gUVCx0-yc1hwZsp7DEvhh-J5M6Jxvuaw3sDZWLztuZYxg8RkrroqtEJ/pub?output=csv','https://docs.google.com/spreadsheets/d/e/2PACX-1vQt1mkG6jEWxAhOstXp7n1ma5iGon40UavpHdnsmSbiHX2UUXEFDkiY5Stv6iNw5BPGTeSC1wNzD1rq/pub?output=csv','https://docs.google.com/spreadsheets/d/e/2PACX-1vRZn59WWUnRW0ePz9XXGdyPfKWZJKExN1dc-siiwo95mocGpMEXFqs6tDIqkMMiLzElH0wCLpyyGPIv/pub?output=csv','https://docs.google.com/spreadsheets/d/e/2PACX-1vQqjMZrtL-o3OutTZIc4-3xP5a4mbj-49B8Fh5FFH7KE2psyxCxAGcEil9vqsORahoU2WYfUDlO27YZ/pub?output=csv','https://docs.google.com/spreadsheets/d/e/2PACX-1vSeybAhqMhCaZDW5inHWC5BuSM7zuRgVNNwWVkOHvwK0VsMJxT5zy2hhM3jUWTXlr4kaB54021EPcaL/pub?output=csv','https://docs.google.com/spreadsheets/d/e/2PACX-1vR51eWhQtabgE-hrdluczsvA7pkpKWvot8ntvJ83HHxYf-0tmgFNj31Y9xZAZGatA9pepwjV60-2tmn/pub?output=csv','https://docs.google.com/spreadsheets/d/e/2PACX-1vR09NpEtd9JPal4cVk9DOQ7JsKSfuJkvtwTEU9pqRflRJ7kk4FI7W1B8oD5lsnOlhM7ylynj7f-2rde/pub?output=csv','https://docs.google.com/spreadsheets/d/e/2PACX-1vRrjTx2j7PRUyUxJRtl2JAQ9TD5WtHjeghy084PyXeP0Y3UFar3IP_nSXaFTeVKGXSY3LcPocGzmGzN/pub?output=csv','https://docs.google.com/spreadsheets/d/e/2PACX-1vRj2LDLBTT-4SqgUW6uy6hI2g-eZpx2G7MZ8xT9opj4P5TCzPEYaxQWxdV9uYzl8_1ujP9flAeRXJVo/pub?output=csv'],
     groupScoreTab:'Group 1',
@@ -676,14 +676,56 @@ function parseCSV(text){const rows=[];let row=[],cell='',q=false;
    else if(ch==='\r'){}else cell+=ch;}}
  if(cell!==''||row.length){row.push(cell);rows.push(row);}return rows;}
 
-function parseSchedule(grid){const out={};const at=(r,c)=>(grid[r]&&grid[r][c]!=null)?String(grid[r][c]):'';
- for(let r=0;r<grid.length;r++){for(let c=0;c<(grid[r]||[]).length;c++){const v=at(r,c);
-  if(v.indexOf('Fields')>-1){const flat=v.replace(/\n/g,' ');const m=flat.match(/Fields\s*(\d+)\s*[-–]\s*(\d+)/);
-   const conf=flat.split(/Fields/)[0].replace(/\s+/g,' ').trim();const range=m?`${m[1]}-${m[2]}`:'';
-   const roundCol=c+1;const cols=[];let j=roundCol+1;while(at(r,j).trim()){cols.push([j,at(r,j).trim()]);j++;}
-   for(const [col,name] of cols){const rounds=[];let rr=r+1;
-    while(/^\d+$/.test(at(rr,roundCol).trim())){rounds.push({round:+at(rr,roundCol).trim(),field:at(rr,col).trim()});rr++;}
-    out[name]={conf,range,rounds};}}}}return out;}
+function parseSchedule(grid){
+ const at=(r,c)=>(grid[r]&&grid[r][c]!=null)?String(grid[r][c]):'';
+ const labelAt=v=>{const flat=String(v||'').replace(/\n/g,' ');
+   if(flat.indexOf('Fields')<0)return null;
+   const m=flat.match(/Fields\s*(\d+)\s*[-\u2013]\s*(\d+)/);
+   return {conf:flat.split(/Fields/)[0].replace(/\s+/g,' ').trim(),range:m?m[1]+'-'+m[2]:''};};
+
+ /* PRIMARY: anchor on the "Round" header cell. The group label
+    ("Group 2 / Fields 4-6") is often a vertically-merged cell, and a CSV
+    export reports a merged value only on its top row - which does NOT line
+    up with the team-name row for any block after the first. The "Round"
+    header always sits on the same row as the team names. */
+ const byRound={};
+ for(let r=0;r<grid.length;r++){
+  for(let c=0;c<(grid[r]||[]).length;c++){
+   if(at(r,c).trim().toLowerCase()!=='round')continue;
+   const cols=[];let j=c+1;
+   while(at(r,j).trim()){cols.push([j,at(r,j).trim()]);j++;}
+   if(!cols.length)continue;
+   let lastRow=r;while(/^\d+$/.test(at(lastRow+1,c).trim()))lastRow++;
+   if(lastRow===r)continue;
+   let info=null;
+   for(let cc=c-1;cc>=Math.max(0,c-3)&&!info;cc--){
+    for(let rr=Math.max(0,r-1);rr<=lastRow&&!info;rr++)info=labelAt(at(rr,cc));
+   }
+   const conf=info?info.conf:'',range=info?info.range:'';
+   for(const [col,name] of cols){
+    const rounds=[];
+    for(let rr=r+1;rr<=lastRow;rr++){
+     const rd=at(rr,c).trim();
+     if(!/^\d+$/.test(rd))continue;
+     rounds.push({round:+rd,field:at(rr,col).trim()});
+    }
+    byRound[name]={conf,range,rounds};
+   }
+  }
+ }
+ if(Object.keys(byRound).length)return byRound;
+
+ /* FALLBACK: original label-anchored scan. */
+ const out={};
+ for(let r=0;r<grid.length;r++){for(let c=0;c<(grid[r]||[]).length;c++){
+  const info=labelAt(at(r,c));if(!info)continue;
+  const roundCol=c+1;const cols=[];let j=roundCol+1;
+  while(at(r,j).trim()){cols.push([j,at(r,j).trim()]);j++;}
+  for(const [col,name] of cols){const rounds=[];let rr=r+1;
+   while(/^\d+$/.test(at(rr,roundCol).trim())){rounds.push({round:+at(rr,roundCol).trim(),field:at(rr,col).trim()});rr++;}
+   out[name]={conf:info.conf,range:info.range,rounds};}
+ }}
+ return out;}
 
 function parseTeams(grid,known){
  const set=new Set(known);

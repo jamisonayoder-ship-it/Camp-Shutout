@@ -1733,10 +1733,11 @@ document.getElementById('qualRefresh').addEventListener('click',()=>{
 document.addEventListener('visibilitychange',()=>{
   if(!document.hidden&&ACTIVE&&Object.keys(SCHEDULE).length)loadGroupData();});
 
-// auto-select from URL hash
+// Always land on "Choose your competition" on load.
+// selectComp() writes a #hash, so clear it on startup — otherwise a reload
+// would jump straight back into the last competition that was open.
 (function(){
-  const h=(location.hash||'').replace('#','');
-  if(COMPETITIONS[h])selectComp(h);
+  if(location.hash)history.replaceState(null,'',location.pathname+location.search);
 })();
 </script>
 </body>

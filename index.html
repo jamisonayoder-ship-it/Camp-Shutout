@@ -1719,6 +1719,11 @@ function selectComp(id){
     Object.assign(QUAL_STANDINGS,TKW_SEED_STANDINGS);
     TKW_SEED_SCORES.forEach(([rd,h,hs,as,a])=>{
       SCORES[h+'@'+rd]={gf:hs,ga:as,opp:a};SCORES[a+'@'+rd]={gf:as,ga:hs,opp:h};});}
+  else if(id==='college'||id==='club'){
+    // Seed offline data immediately so the schedule/finder/groups render right
+    // away, exactly like TKW's snapshot — live() then upgrades it from Sheets.
+    try{const sd=buildStaticData(id==='college'?STAN_STATIC:DOUG_STATIC);
+      if(sd&&Object.keys(sd.sched).length){SCHEDULE=sd.sched;TEAMS=sd.teams;buildIndex();}}catch(e){}}
   // update UI
   updateHero();updateStats();updateSectionText();buildQualStandings();
   resetSearch();

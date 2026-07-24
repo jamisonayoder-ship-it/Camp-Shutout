@@ -421,7 +421,8 @@ footer{margin-top:60px;border-top:1px solid var(--line);background:#fff}
   <div class="tabbar" role="tablist">
     <button class="tab active" data-tab="group" role="tab" aria-selected="true">Find Your Team</button>
     <button class="tab" data-tab="standings" role="tab" aria-selected="false">Qualifier Standings</button>
-    <button class="tab" data-tab="ko" role="tab" aria-selected="false">Knockout Stage</button>
+    <button class="tab" data-tab="kosched" id="tabKoSched" role="tab" aria-selected="false">Knockout Schedule</button>
+    <button class="tab" data-tab="ko" role="tab" aria-selected="false">Knockout Standings</button>
   </div>
 </div>
 
@@ -455,17 +456,25 @@ footer{margin-top:60px;border-top:1px solid var(--line);background:#fff}
   </div>
 </section>
 
-<!-- KNOCKOUT -->
+<!-- KNOCKOUT SCHEDULE -->
+<section class="kosec tabpanel" id="tab-kosched" role="tabpanel">
+  <div class="wrap">
+    <p class="eyebrow">Knockout Stage · Group Play</p>
+    <h2>Group Play Schedule</h2>
+    <div class="block" id="gpScheduleBlock"><h3>Group Play · Schedule</h3>
+      <p class="konote small">Round-robin fixtures for each group. Scores fill in as games are played.</p>
+      <div id="gpSchedule"><div class="ko-empty">The group schedule will appear here after the break.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- KNOCKOUT STANDINGS + BRACKET -->
 <section class="kosec tabpanel" id="tab-ko" role="tabpanel">
   <div class="wrap">
     <p class="eyebrow">Knockout Stage · How the title is decided</p>
     <h2>The Road to the Title</h2>
     <p class="konote" id="koNote"></p>
     <div id="koLive">
-    <div class="block" id="gpScheduleBlock"><h3>Group Play · Schedule</h3>
-      <p class="konote small">Round-robin fixtures for each group. Scores fill in as games are played.</p>
-      <div id="gpSchedule"><div class="ko-empty">The group schedule will appear here after the break.</div></div>
-    </div>
     <div class="block" id="gpStandingsBlock"><h3>Group Play · Standings</h3>
       <p class="konote small">Each team's new group after the qualifier break. Positions update live from the sheet.</p>
       <div id="gpStandings"><div class="ko-empty">Group standings will appear here after the break.</div></div>
@@ -522,8 +531,8 @@ const COMPETITIONS={
     rosterTab:'Team Generator',schedTab:'Team Schedule',minSchedule:10,bracketPubUrl:'https://docs.google.com/spreadsheets/d/e/2PACX-1vR0NH8EgY33gw3H8N4m7_Y-R6qN13XImLiVBWI_Zvu9SW4FekLVgaUqak1KJbh4_sDYke9wW-nkxUqM/pub?gid=1776573154&single=true&output=csv',bracketColOffset:12,groupPlayPubUrl:'https://docs.google.com/spreadsheets/d/e/2PACX-1vR0NH8EgY33gw3H8N4m7_Y-R6qN13XImLiVBWI_Zvu9SW4FekLVgaUqak1KJbh4_sDYke9wW-nkxUqM/pub?gid=1050495143&single=true&output=csv',
     rosterPubUrl:'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ98bPV7TYvvdj1wWCWsqbPxGet7BEzq57EPwG8Jqm2CzuCSnL4yD1PNhSsp4QSySsIKSarGiWpYXUt/pub?gid=2089924649&single=true&output=csv',
     schedPubUrl:'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ98bPV7TYvvdj1wWCWsqbPxGet7BEzq57EPwG8Jqm2CzuCSnL4yD1PNhSsp4QSySsIKSarGiWpYXUt/pub?gid=620452336&single=true&output=csv',
-    groupNames:['AFC','CAF Group 1','CAF Group 2','CONCACAF Group 1','CONCACAF Group 2','CONMEBOL','OFC','UEFA Group 1','UEFA Group 2'],
-    groupScoreUrls:['https://docs.google.com/spreadsheets/d/e/2PACX-1vQTypEIn7iJgXrO82p2he3bqAVBXiDH9IUOLmAX--ri0zTeGaOtW2tqOEyvS__HRTojJhWqLJ41fBxC/pub?output=csv','https://docs.google.com/spreadsheets/d/e/2PACX-1vTq3u1FnS-4sWs0xkUEpoNL9lc1IoxWvdB1_Lk0BwEbBBPtFCVqoqLXQQZf5AhdRQB-T6gaeuOoGi7g/pub?output=csv','https://docs.google.com/spreadsheets/d/e/2PACX-1vRfgIwAF14mHU79EsCyBeayREpNYabPUnl1q7cz-ksCwpd0_bMy0ILusbQvUbyvj3uGf3Z_kT7-DCv9/pub?output=csv','https://docs.google.com/spreadsheets/d/e/2PACX-1vSo4jxk5oO_A4MbF7jOdyqV-INfhFFIb9-H2C7JeCDqLr49_xa61nkFrMnVR4TwXwH-0Sgg4xcJv808/pub?output=csv','https://docs.google.com/spreadsheets/d/e/2PACX-1vR_SKIQib67HGkxluQCIkuSQm5booriZi2nAy7QukAVefVhxv49_wKeDzh5KkgaZr99L2HrSMeBJ5Q_/pub?output=csv','https://docs.google.com/spreadsheets/d/e/2PACX-1vRxqg1ZuAV19SMg8erLVYID5E-5KOmsUTcYh12tFsfCgUGDfS2c6kC0YB0oPsstKDv1fj0Wgn4NStBR/pub?output=csv','https://docs.google.com/spreadsheets/d/e/2PACX-1vTFwqzfCvu_zjLWYN3xn591zfYdl0sdtljgSixgL8aDiPTLFcwiqxzc09dNepqhr6tyG3io_rqG6rhx/pub?output=csv','https://docs.google.com/spreadsheets/d/e/2PACX-1vS4e1gHbOzG6xmPZNulJ3cUbBscMJeSUFBSK6GPCQJVmVbXuvR_S8ksF9NIkI9cGQwrbWxqywlHHs01/pub?output=csv','https://docs.google.com/spreadsheets/d/e/2PACX-1vT2ZOjUDzlL8Gqwlh7Br4LfHQ2QfdM45pl2RNI76XEFFsGHUmwRFpGe6kdUfwmvkG8RWMCS9Rs1AOB4/pub?output=csv'],
+    groupNames:['AFC','CAF Group 1','CAF Group 2','CONCACAF Group 1','CONCACAF Group 2','CONMEBOL','OFC','UEFA Group 1'],
+    groupScoreUrls:['https://docs.google.com/spreadsheets/d/e/2PACX-1vQTypEIn7iJgXrO82p2he3bqAVBXiDH9IUOLmAX--ri0zTeGaOtW2tqOEyvS__HRTojJhWqLJ41fBxC/pub?output=csv','https://docs.google.com/spreadsheets/d/e/2PACX-1vTq3u1FnS-4sWs0xkUEpoNL9lc1IoxWvdB1_Lk0BwEbBBPtFCVqoqLXQQZf5AhdRQB-T6gaeuOoGi7g/pub?output=csv','https://docs.google.com/spreadsheets/d/e/2PACX-1vRfgIwAF14mHU79EsCyBeayREpNYabPUnl1q7cz-ksCwpd0_bMy0ILusbQvUbyvj3uGf3Z_kT7-DCv9/pub?output=csv','https://docs.google.com/spreadsheets/d/e/2PACX-1vSo4jxk5oO_A4MbF7jOdyqV-INfhFFIb9-H2C7JeCDqLr49_xa61nkFrMnVR4TwXwH-0Sgg4xcJv808/pub?output=csv','https://docs.google.com/spreadsheets/d/e/2PACX-1vR_SKIQib67HGkxluQCIkuSQm5booriZi2nAy7QukAVefVhxv49_wKeDzh5KkgaZr99L2HrSMeBJ5Q_/pub?output=csv','https://docs.google.com/spreadsheets/d/e/2PACX-1vRxqg1ZuAV19SMg8erLVYID5E-5KOmsUTcYh12tFsfCgUGDfS2c6kC0YB0oPsstKDv1fj0Wgn4NStBR/pub?output=csv','https://docs.google.com/spreadsheets/d/e/2PACX-1vTFwqzfCvu_zjLWYN3xn591zfYdl0sdtljgSixgL8aDiPTLFcwiqxzc09dNepqhr6tyG3io_rqG6rhx/pub?output=csv','https://docs.google.com/spreadsheets/d/e/2PACX-1vS4e1gHbOzG6xmPZNulJ3cUbBscMJeSUFBSK6GPCQJVmVbXuvR_S8ksF9NIkI9cGQwrbWxqywlHHs01/pub?output=csv'],
     groupScoreTab:'TKW',
     groupScoreIds:[
       '1BHX9AclKJPtQdDstEZ39Tjkz3L2SysMm9KI8JeZSAOE',
@@ -1146,6 +1155,9 @@ function updateSectionText(){
   const qn=document.getElementById('qualNote');
   if(qn){qn.innerHTML=esc(ACTIVE.qualNote)+' <span id="qualStatus"></span>';}
   const kn=document.getElementById('koNote');if(kn)kn.textContent=ACTIVE.koNote;
+  // Only TKW has a group-play round-robin; hide that tab for the others.
+  const ks=document.getElementById('tabKoSched');
+  if(ks)ks.style.display=ACTIVE.groupPlayPubUrl?'':'none';
   // Field map: swap in this competition's image, or hide the section entirely.
   const mapSec=document.getElementById('map');
   const mapSrc=FIELD_MAPS[ACTIVE.id];
@@ -1426,7 +1438,7 @@ async function loadGroupData(){
   LAST_UPDATED=new Date();GROUPS_LOADING=false;
   if(btn)btn.classList.remove('spin');
   buildQualStandings();if(lastChoice)renderResult(lastChoice);
-  const _kot=document.getElementById('tab-ko');if(_kot&&_kot.classList.contains('active')&&ACTIVE&&(ACTIVE.bracketPubUrl||ACTIVE.groupPlayPubUrl))fetchBracketData();}
+  const _kot=document.getElementById('tab-ko'),_kos=document.getElementById('tab-kosched');if(((_kot&&_kot.classList.contains('active'))||(_kos&&_kos.classList.contains('active')))&&ACTIVE&&(ACTIVE.bracketPubUrl||ACTIVE.groupPlayPubUrl))fetchBracketData();}
 
 /* ============ BRACKET ============ */
 
@@ -1685,7 +1697,7 @@ window.openFieldMap=openFieldMap;
     document.querySelectorAll('.tabpanel').forEach(p=>p.classList.remove('active'));
     this.classList.add('active');this.setAttribute('aria-selected','true');
     const panel=document.getElementById('tab-'+id);if(panel)panel.classList.add('active');
-    if(id==='ko'&&ACTIVE){buildBracket(ACTIVE.bracketSize);if(ACTIVE.bracketPubUrl||ACTIVE.groupPlayPubUrl)fetchBracketData();}
+    if((id==='ko'||id==='kosched')&&ACTIVE){buildBracket(ACTIVE.bracketSize);if(ACTIVE.bracketPubUrl||ACTIVE.groupPlayPubUrl)fetchBracketData();}
     if(id==='standings'){const h=document.getElementById('qualStandings');if(h&&!h.children.length)buildQualStandings();}
   }));})();
 
@@ -1756,11 +1768,10 @@ document.getElementById('qualRefresh').addEventListener('click',()=>{
 document.addEventListener('visibilitychange',()=>{
   if(!document.hidden&&ACTIVE&&Object.keys(SCHEDULE).length)loadGroupData();});
 
-// Always land on "Choose your competition" on load.
-// selectComp() writes a #hash, so clear it on startup — otherwise a reload
-// would jump straight back into the last competition that was open.
+// Open straight into Team Keeper Wars on every load, so players land on the
+// name search. The header switcher still gets them to the other competitions.
 (function(){
-  if(location.hash)history.replaceState(null,'',location.pathname+location.search);
+  if(COMPETITIONS.tkw)selectComp('tkw');
 })();
 </script>
 </body>

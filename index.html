@@ -531,6 +531,7 @@ const COMPETITIONS={
     rosterTab:'Team Generator',schedTab:'Team Schedule',minSchedule:10,bracketPubUrl:'https://docs.google.com/spreadsheets/d/e/2PACX-1vR0NH8EgY33gw3H8N4m7_Y-R6qN13XImLiVBWI_Zvu9SW4FekLVgaUqak1KJbh4_sDYke9wW-nkxUqM/pub?gid=1776573154&single=true&output=csv',bracketColOffset:12,groupPlayPubUrl:'https://docs.google.com/spreadsheets/d/e/2PACX-1vR0NH8EgY33gw3H8N4m7_Y-R6qN13XImLiVBWI_Zvu9SW4FekLVgaUqak1KJbh4_sDYke9wW-nkxUqM/pub?gid=1050495143&single=true&output=csv',
     rosterPubUrl:'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ98bPV7TYvvdj1wWCWsqbPxGet7BEzq57EPwG8Jqm2CzuCSnL4yD1PNhSsp4QSySsIKSarGiWpYXUt/pub?gid=2089924649&single=true&output=csv',
     schedPubUrl:'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ98bPV7TYvvdj1wWCWsqbPxGet7BEzq57EPwG8Jqm2CzuCSnL4yD1PNhSsp4QSySsIKSarGiWpYXUt/pub?gid=620452336&single=true&output=csv',
+    hideConfs:['UEFA #2','UEFA Group 2','UEFA 2'],
     groupNames:['AFC','CAF Group 1','CAF Group 2','CONCACAF Group 1','CONCACAF Group 2','CONMEBOL','OFC','UEFA Group 1'],
     groupScoreUrls:['https://docs.google.com/spreadsheets/d/e/2PACX-1vQTypEIn7iJgXrO82p2he3bqAVBXiDH9IUOLmAX--ri0zTeGaOtW2tqOEyvS__HRTojJhWqLJ41fBxC/pub?output=csv','https://docs.google.com/spreadsheets/d/e/2PACX-1vTq3u1FnS-4sWs0xkUEpoNL9lc1IoxWvdB1_Lk0BwEbBBPtFCVqoqLXQQZf5AhdRQB-T6gaeuOoGi7g/pub?output=csv','https://docs.google.com/spreadsheets/d/e/2PACX-1vRfgIwAF14mHU79EsCyBeayREpNYabPUnl1q7cz-ksCwpd0_bMy0ILusbQvUbyvj3uGf3Z_kT7-DCv9/pub?output=csv','https://docs.google.com/spreadsheets/d/e/2PACX-1vSo4jxk5oO_A4MbF7jOdyqV-INfhFFIb9-H2C7JeCDqLr49_xa61nkFrMnVR4TwXwH-0Sgg4xcJv808/pub?output=csv','https://docs.google.com/spreadsheets/d/e/2PACX-1vR_SKIQib67HGkxluQCIkuSQm5booriZi2nAy7QukAVefVhxv49_wKeDzh5KkgaZr99L2HrSMeBJ5Q_/pub?output=csv','https://docs.google.com/spreadsheets/d/e/2PACX-1vRxqg1ZuAV19SMg8erLVYID5E-5KOmsUTcYh12tFsfCgUGDfS2c6kC0YB0oPsstKDv1fj0Wgn4NStBR/pub?output=csv','https://docs.google.com/spreadsheets/d/e/2PACX-1vTFwqzfCvu_zjLWYN3xn591zfYdl0sdtljgSixgL8aDiPTLFcwiqxzc09dNepqhr6tyG3io_rqG6rhx/pub?output=csv','https://docs.google.com/spreadsheets/d/e/2PACX-1vS4e1gHbOzG6xmPZNulJ3cUbBscMJeSUFBSK6GPCQJVmVbXuvR_S8ksF9NIkI9cGQwrbWxqywlHHs01/pub?output=csv'],
     groupScoreTab:'TKW',
@@ -1326,7 +1327,11 @@ function parseGroupScores(grid){
   return out;}
 function buildQualStandings(){
   const host=document.getElementById('qualStandings');if(!host)return;
-  const confs=[...new Set(Object.values(SCHEDULE).map(s=>s.conf))].sort((a,b)=>CONF_RANK(a)-CONF_RANK(b));
+  // Retired groups may still exist in the schedule sheet; keep them out of the tables.
+  const hide=new Set((ACTIVE&&ACTIVE.hideConfs)||[]);
+  const confs=[...new Set(Object.values(SCHEDULE).map(s=>s.conf))]
+    .filter(c=>c&&!hide.has(c))
+    .sort((a,b)=>CONF_RANK(a)-CONF_RANK(b));
   if(!confs.length){host.innerHTML='<div class="ko-empty">Loading groups…</div>';return;}
   const live=Object.keys(QUAL_STANDINGS).length;
   const status=document.getElementById('qualStatus');
@@ -1509,7 +1514,9 @@ function parseGPStandings(csv){
     for(let c=1;c<=10;c++){const v=cl(row[c]);if(v&&/^([A-Z]{1,3}|GROUP \d+)$/.test(v))codes.push([c,v]);}
     if(codes.length>=3&&!/^\d+$/.test(cl(row[0]))){
       const posRows=[];
-      for(let k=1;k<=3;k++){const pr=rows[r+k]||[];if(/^\d+$/.test(cl(pr[0])))posRows.push(pr);}
+      // Read as many ranked rows as the sheet lists (3, 4, ...). The next
+      // band's header has a blank first column, so this stops on its own.
+      for(let k=1;k<=12;k++){const pr=rows[r+k]||[];if(!/^\d+$/.test(cl(pr[0])))break;posRows.push(pr);}
       for(const [c,code] of codes){
         const teams=posRows.map(pr=>cl(pr[c]));
         if(teams.some(t=>t))groups.push({code,field:fieldForBandCol(bandIdx,c),teams});
